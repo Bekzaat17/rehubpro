@@ -1,0 +1,14 @@
+<!-- templates/lectures/lecture_list.html -->
+
+<h1>Лекции</h1>
+<ul>
+  {% for lecture in lectures %}
+    <li>
+      <strong>{{ lecture.title }}</strong><br>
+      {{ lecture.content|truncatewords:20 }}<br>
+      <em>Опубликовано: {{ lecture.created_at }}</em>
+    </li>
+  {% empty %}
+    <li>Лекций пока нет.</li>
+  {% endfor %}
+</ul>

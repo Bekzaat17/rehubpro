@@ -1,0 +1,8 @@
+<!-- templates/lectures/lecture_detail.html -->
+
+<h1>{{ lecture.title }}</h1>
+<p><em>Опубликовано: {{ lecture.created_at }}</em></p>
+<hr>
+<div>
+  {{ lecture.content|linebreaks }}
+</div>
