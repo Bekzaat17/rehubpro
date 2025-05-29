@@ -1,28 +1,33 @@
 # users/views/auth.py
 
-from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from django.views import View
+from django.contrib.auth import login
+from django.contrib.auth.forms import AuthenticationForm
+from django.urls import reverse
+
 from users.models import UserRole
 
 
 class LoginView(View):
     def get(self, request):
-        return render(request, 'login.html')
+        form = AuthenticationForm()
+        return render(request, 'users/login.html', {'form': form})
 
     def post(self, request):
-        username = request.POST.get('username')
-        password = request.POST.get('password')
+        form = AuthenticationForm(request, data=request.POST)
 
-        user = authenticate(request, username=username, password=password)
-
-        if user is not None:
+        if form.is_valid():
+            user = form.get_user()
             login(request, user)
-            if user.role == UserRole.ADMIN:
-                return redirect('/admin-panel/')
-            elif user.role == UserRole.CONSULTANT:
-                return redirect('/consultant/')
-            elif user.role == UserRole.PSYCHOLOGIST:
-                return redirect('/psychologist/')
-        else:
-            return render(request, 'login.html', {'error': 'Неверный логин или пароль'})
+
+            match user.role:
+                case UserRole.ADMIN:
+                    return redirect(reverse('admin:dashboard'))
+                case UserRole.CONSULTANT:
+                    return redirect(reverse('consultant:dashboard'))
+                case UserRole.PSYCHOLOGIST:
+                    return redirect(reverse('psychologist:dashboard'))
+
+        # Если невалидно — снова рендерим форму с ошибками
+        return render(request, 'users/login.html', {'form': form})

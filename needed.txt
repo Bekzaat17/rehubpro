@@ -1,6 +1,9 @@
 login: superadmin
-email: superadmin@mail.com
-pass: superadmin123
+pass: superadmin
+
+login: konsultant
+pass: 123456Qa
+
 
 
 

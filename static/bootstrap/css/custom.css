@@ -1,0 +1,14 @@
+:root {
+  --bs-primary: #0d6efd;     /* Синий */
+  --bs-secondary: #20c997;   /* Изумрудный */
+  --bs-success: #198754;
+  --bs-info: #0dcaf0;
+  --bs-warning: #ffc107;
+  --bs-danger: #dc3545;
+  --bs-light: #f8f9fa;
+  --bs-dark: #212529;
+}
+
+body {
+  font-family: 'Segoe UI', Roboto, sans-serif;
+}
