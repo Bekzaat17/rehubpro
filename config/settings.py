@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'tasks',
     'lectures',
     'references',
+    'reports',
 ]
 
 MIDDLEWARE = [
