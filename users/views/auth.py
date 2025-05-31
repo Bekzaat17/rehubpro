@@ -22,12 +22,12 @@ class LoginView(View):
             login(request, user)
 
             match user.role:
-                case UserRole.ADMIN:
-                    return redirect(reverse('admin:dashboard'))
+                # case UserRole.ADMIN:
+                #     return redirect(reverse('admin:dashboard'))
                 case UserRole.CONSULTANT:
-                    return redirect(reverse('consultant:dashboard'))
-                case UserRole.PSYCHOLOGIST:
-                    return redirect(reverse('psychologist:dashboard'))
+                    return redirect(reverse('users:dashboard'))
+                # case UserRole.PSYCHOLOGIST:
+                #     return redirect(reverse('psychologist:dashboard'))
 
         # Если невалидно — снова рендерим форму с ошибками
         return render(request, 'users/login.html', {'form': form})

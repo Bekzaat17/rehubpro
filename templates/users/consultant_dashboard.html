@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Личный кабинет консультанта — {{ PROJECT_NAME }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0"></h2>
+    <button type="button" class="btn btn-secondary-custom" data-bs-toggle="modal" data-bs-target="#addResidentModal">
+        + Добавить резидента
+    </button>
+</div>
+
+<div class="text-center mt-5">
+    <h1 class="text-primary-custom">Личный кабинет консультанта</h1>
+    <p class="text-muted">Раздел находится в разработке. Здесь будут таблицы и окна для работы.</p>
+
+    <table id="residents-table" class="table table-bordered">
+        <thead><tr id="residents-header"></tr></thead>
+        <tbody id="residents-body"></tbody>
+    </table>
+</div>
+
+{% include "residents/add_modal.html" %}
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'js/residents_table.js' %}"></script>
+{% endblock %}
