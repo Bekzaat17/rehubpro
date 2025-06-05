@@ -1,0 +1,20 @@
+{% load static %}
+<nav class="navbar navbar-light bg-light justify-content-end px-4 shadow-sm">
+    <div class="dropdown">
+        <a class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            <img src="{% if request.user.avatar %}{{ request.user.avatar.url }}{% else %}{% static 'img/default_avatar.png' %}{% endif %}"
+                 alt="Avatar"
+                 class="rounded-circle me-2"
+                 width="32"
+                 height="32">
+            <span>{{ request.user.username }}</span>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+            <li><h6 class="dropdown-header">{{ request.user.get_role_display }}</h6></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="{% url 'users:settings' %}">⚙️ Настройки</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item text-danger" href="{% url 'users:logout' %}">🚪 Выйти</a></li>
+        </ul>
+    </div>
+</nav>
