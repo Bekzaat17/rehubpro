@@ -1,10 +1,10 @@
 # users/views/consultant_dashboard_view.py
-
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
 from residents.forms import ResidentForm
 
 
-class ConsultantDashboardView(TemplateView):
+class ConsultantDashboardView(LoginRequiredMixin, TemplateView):
     """
     Представление для пустого личного кабинета консультанта.
     Заглушка, которая будет дополняться модулями (таблицами, окнами и т.п.).

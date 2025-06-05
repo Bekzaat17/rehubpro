@@ -1,3 +1,5 @@
+from django.urls import reverse_lazy
+
 """
 Django settings for config project.
 
@@ -137,4 +139,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'users.User'
 
-LOGIN_REDIRECT_URL = '/consultant/'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+
+# --- Auth Configuration ---
+LOGIN_URL = reverse_lazy('users:login')                   # Куда перенаправлять, если пользователь неавторизован
+LOGOUT_URL = reverse_lazy('users:logout')                   # URL выхода из системы
+LOGIN_REDIRECT_URL = reverse_lazy('users:dashboard')  # Куда перенаправлять после успешного входа
+LOGOUT_REDIRECT_URL = reverse_lazy('users:login')

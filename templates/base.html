@@ -6,10 +6,9 @@
     <title>{% block title %}{{ PROJECT_NAME }}{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- Базовый Bootstrap -->
+    <!-- Bootstrap -->
     <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
 
-    <!-- Глобальные переменные цвета -->
     <style>
         :root {
             --primary-color: #007BFF;     /* Синий */
@@ -18,16 +17,53 @@
             --text-color: #212529;
         }
 
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+
         body {
             background-color: var(--bg-color);
             color: var(--text-color);
-            min-height: 100vh;
+            display: flex;
+            flex-direction: row;
+        }
+
+        .wrapper {
             display: flex;
             flex-direction: column;
+            min-height: 100vh;
+            flex-grow: 1;
+        }
+
+        main {
+            flex-grow: 1;
+            padding: 1.5rem;
         }
 
         footer {
-            margin-top: auto;
+            background-color: #343a40;
+            color: white;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #343a40;
+            color: white;
+            min-height: 100vh;
+        }
+
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .sidebar a.active,
+        .sidebar a:hover {
+            background-color: #495057;
+            padding-left: 10px;
         }
 
         .bg-primary-custom {
@@ -55,21 +91,60 @@
 </head>
 <body>
 
-    <!-- Контент -->
-    <main class="flex-grow-1 py-5">
-        <div class="container">
-            {% block content %}
-            <!-- Контент страницы -->
-            {% endblock %}
-        </div>
-    </main>
+    {% if request.user.is_authenticated %}
+        <!-- Боковое меню -->
+        <nav class="sidebar d-flex flex-column p-3">
+            <h4 class="text-white">RehabPro</h4>
+            <hr class="text-secondary">
+              <ul class="nav nav-pills flex-column mb-auto">
+              <li><a href="{% url 'users:dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">🏠 Главная</a></li>
+{#            <li><a href="{% url 'tasks:list' %}" class="nav-link {% if request.resolver_match.url_name == 'list' and 'tasks' in request.path %}active{% endif %}">✅ Задания</a></li>#}
+{#            <li><a href="{% url 'reports:list' %}" class="nav-link {% if request.resolver_match.url_name == 'list' and 'reports' in request.path %}active{% endif %}">📄 Отчёты</a></li>#}
+{#            <li><a href="{% url 'lectures:index' %}" class="nav-link {% if request.resolver_match.url_name == 'index' and 'lectures' in request.path %}active{% endif %}">📚 Лекции</a></li>#}
+{#            <li><a href="{% url 'documents:index' %}" class="nav-link {% if request.resolver_match.url_name == 'index' and 'documents' in request.path %}active{% endif %}">🗂️ Документы и файлы</a></li>#}
+{#            <li><a href="{% url 'analytics:index' %}" class="nav-link {% if request.resolver_match.url_name == 'index' and 'analytics' in request.path %}active{% endif %}">📊 Аналитика</a></li>#}
+{#            {% if request.user.is_authenticated and request.user.role == 'consultant' %}#}
+{#                <!-- Показываем меню -->#}
+{#                <li><a href="{% url 'settings:index' %}" class="nav-link {% if request.resolver_match.url_name == 'index' and 'settings' in request.path %}active{% endif %}">⚙️ Настройки</a></li>#}
+{#            {% endif %}#}
+        </ul>
+        </nav>
+    {% endif %}
 
-    <!-- Футер -->
-    <footer class="bg-dark text-white text-center py-3">
-        <small>&copy; 2025 RehabPro</small>
-    </footer>
+    <div class="wrapper">
+        {% if request.user.is_authenticated %}
+        <!-- Навбар с иконкой пользователя -->
+        <nav class="navbar navbar-light bg-light justify-content-end px-4 shadow-sm">
+            <div class="dropdown">
+                <a class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="{% if request.user.avatar %}{{ request.user.avatar.url }}{% else %}{% static 'img/default_avatar.png' %}{% endif %}"
+                         alt="Avatar"
+                         class="rounded-circle me-2"
+                         width="32"
+                         height="32">
+                    <span>{{ request.user.username }}</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                    <li><h6 class="dropdown-header">{{ request.user.get_role_display }}</h6></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item text-danger" href="{% url 'users:logout' %}">🚪 Выйти</a></li>
+                </ul>
+            </div>
+        </nav>
+        {% endif %}
 
-    <!-- Bootstrap JS -->
+        <main>
+            <div class="container">
+                {% block content %}
+                {% endblock %}
+            </div>
+        </main>
+
+        <footer>
+            <small>&copy; {{ now.year }} {{ PROJECT_NAME }}</small>
+        </footer>
+    </div>
+
     <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
     {% block extra_js %}{% endblock %}
 </body>

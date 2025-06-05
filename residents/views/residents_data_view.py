@@ -1,12 +1,12 @@
 # residents/views/residents_data_view.py
-
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from django.views import View
 from residents.models import Resident
 from core.util import format_date
 
 
-class ResidentsDataView(View):
+class ResidentsDataView(LoginRequiredMixin, View):
     """
     API-представление, возвращающее список резидентов в виде JSON.
     Все названия колонок и значения динамически формируются.
