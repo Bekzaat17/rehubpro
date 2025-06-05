@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load form_tags %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4 text-center">Настройки пользователя</h2>
+
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <!-- Аватар -->
+            <div class="text-center mb-4">
+                <img src="{% if request.user.avatar %}{{ request.user.avatar.url }}{% else %}{% static 'img/default_avatar.png' %}{% endif %}"
+                     class="rounded-circle shadow"
+                     width="120"
+                     height="120"
+                     alt="Avatar">
+            </div>
+
+            <!-- Форма загрузки аватара -->
+            <form method="post" enctype="multipart/form-data" class="mb-4 text-center">
+                {% csrf_token %}
+                <div class="mb-2 text-start">
+                    {{ avatar_form.avatar.label_tag }}
+                    {{ avatar_form.avatar }}
+                </div>
+                <button type="submit" name="avatar_submit" class="btn btn-primary-custom px-4">Загрузить аватар</button>
+            </form>
+
+            <!-- Форма смены пароля -->
+            <form method="post" class="text-center">
+                {% csrf_token %}
+                <h5 class="mb-3 text-start">Изменение пароля</h5>
+
+                {% for field in password_form %}
+                    <div class="mb-2 text-start">
+                        {{ field.label_tag }}
+                        {% if field.errors %}
+                            {{ field|add_class:"form-control is-invalid" }}
+                            <div class="invalid-feedback d-block">
+                                {{ field.errors.0 }}
+                            </div>
+                        {% else %}
+                            {{ field|add_class:"form-control" }}
+                        {% endif %}
+                    </div>
+                {% endfor %}
+
+                <button type="submit" name="password_submit" class="btn btn-primary-custom px-4">Сменить пароль</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

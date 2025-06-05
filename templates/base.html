@@ -11,8 +11,8 @@
 
     <style>
         :root {
-            --primary-color: #007BFF;     /* Синий */
-            --secondary-color: #2ECC71;   /* Изумрудный */
+            --primary-color: #2ECC71;     /* Синий */
+            --secondary-color: #007BFF;   /* Изумрудный */
             --bg-color: #f8f9fa;
             --text-color: #212529;
         }
@@ -94,7 +94,7 @@
     {% if request.user.is_authenticated %}
         <!-- Боковое меню -->
         <nav class="sidebar d-flex flex-column p-3">
-            <h4 class="text-white">RehabPro</h4>
+            <h4 class="text-white">{{ PROJECT_NAME }}</h4>
             <hr class="text-secondary">
               <ul class="nav nav-pills flex-column mb-auto">
               <li><a href="{% url 'users:dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">🏠 Главная</a></li>
@@ -126,6 +126,8 @@
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                     <li><h6 class="dropdown-header">{{ request.user.get_role_display }}</h6></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="{% url 'users:settings' %}">⚙️ Настройки</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item text-danger" href="{% url 'users:logout' %}">🚪 Выйти</a></li>
                 </ul>
