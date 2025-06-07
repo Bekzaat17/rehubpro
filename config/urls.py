@@ -23,4 +23,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('users.urls')),  # Подключаем все маршруты из users
     path('residents/', include('residents.urls', namespace='residents')),
+    path('tasks/', include('tasks.urls', namespace='tasks')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

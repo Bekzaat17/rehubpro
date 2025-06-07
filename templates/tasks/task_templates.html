@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Шаблоны заданий{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between mb-3">
+    <h2>Шаблоны заданий</h2>
+    <button class="btn btn-primary-custom" onclick="openTemplateModal()">Добавить шаблон</button>
+</div>
+
+<table class="table table-bordered" id="templateTable">
+    <thead>
+        <tr>
+            <th>Название</th>
+            <th>Описание</th>
+            <th>Тип</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Динамически наполняется JS -->
+    </tbody>
+</table>
+
+<!-- Modal -->
+<div class="modal fade" id="taskTemplateModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form onsubmit="submitTemplateForm(event)" method="post">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">Шаблон задания</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="templateId">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Название</label>
+                        <input type="text" class="form-control" id="title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Описание</label>
+                        <textarea class="form-control" id="description" rows="4"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="taskType" class="form-label">Тип задания</label>
+                        <select class="form-select" id="taskType" required>
+                            <option value="short_term">Краткосрочное</option>
+                            <option value="long_term">Долгосрочное</option>
+                            <option value="test">Тестовое</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary-custom">Сохранить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/tasks/task_templates.js' %}"></script>
+{% endblock %}

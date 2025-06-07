@@ -1,24 +1,23 @@
+#tasks/strategy/base_task.py
 from abc import ABC, abstractmethod
-from datetime import date
 from residents.models import Resident
 from tasks.models.assigned_task import AssignedTask
-from tasks.enums import TaskType
+from tasks.models.task_template import TaskTemplate
 
 
 class BaseTask(ABC):
     """
     Абстрактный базовый класс задания.
-    По SOLID: реализует принцип единственной ответственности (Single Responsibility).
     """
 
-    def __init__(self, resident: Resident, title: str, comment: str = ""):
+    def __init__(self, resident: Resident, template: TaskTemplate, comment: str = ""):
         self.resident = resident
-        self.title = title
+        self.template = template
         self.comment = comment
 
     @abstractmethod
     def create(self) -> AssignedTask:
         """
-        Метод, который должен реализовать каждый подкласс.
+        Метод должен создавать назначенное задание.
         """
         pass
