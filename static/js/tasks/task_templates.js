@@ -34,6 +34,14 @@ function openTemplateModal(id = null, title = '', description = '', taskType = '
     document.getElementById("title").value = title || '';
     document.getElementById("description").value = description || '';
     document.getElementById("taskType").value = taskType || 'short_term';
+
+    const deleteBtn = document.getElementById("deleteBtn");
+    if (id) {
+        deleteBtn.style.display = "inline-block";
+    } else {
+        deleteBtn.style.display = "none";
+    }
+
     const modal = new bootstrap.Modal(document.getElementById("taskTemplateModal"));
     modal.show();
 }
@@ -62,4 +70,27 @@ function submitTemplateForm(event) {
 
 function getCSRFToken() {
     return document.querySelector('[name=csrfmiddlewaretoken]').value;
+}
+
+
+function deleteTemplate() {
+    const id = document.getElementById("templateId").value;
+    if (!id) return;
+
+    if (!confirm("Вы уверены, что хотите удалить этот шаблон?")) return;
+
+    fetch(`/tasks/templates/api/${id}/`, {
+        method: "DELETE",
+        headers: {
+            "X-CSRFToken": getCSRFToken(),
+        }
+    })
+    .then(res => {
+        if (res.ok) {
+            bootstrap.Modal.getInstance(document.getElementById("taskTemplateModal")).hide();
+            loadTemplates();
+        } else {
+            alert("Ошибка при удалении шаблона.");
+        }
+    });
 }

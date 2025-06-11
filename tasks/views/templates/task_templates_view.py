@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.utils.decorators import method_decorator
 from tasks.models.task_template import TaskTemplate
+from django.shortcuts import get_object_or_404
 
 import json
 
@@ -48,3 +49,12 @@ class TaskTemplateAPI(LoginRequiredMixin, View):
     def get(self, request):
         templates = TaskTemplate.objects.all().values('id', 'title', 'description', 'task_type')
         return JsonResponse(list(templates), safe=False)
+
+    def delete(self, request, *args, **kwargs):
+        """
+        Удаляет шаблон по ID, переданному в URL.
+        """
+        template_id = kwargs.get('template_id')
+        template = get_object_or_404(TaskTemplate, id=template_id)
+        template.delete()
+        return JsonResponse({'status': 'deleted'})

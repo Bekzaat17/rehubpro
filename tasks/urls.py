@@ -7,4 +7,6 @@ app_name = 'tasks'
 
 urlpatterns = [
     path('templates/', TaskTemplatesView.as_view(), name='task_templates'),
-    path('templates/api/', TaskTemplateAPI.as_view(), name='task_templates_api'),]
+    path('templates/api/', TaskTemplateAPI.as_view(), name='task_templates_api'),
+    path('templates/api/<int:template_id>/', TaskTemplateAPI.as_view(), name='template_api_delete'),
+]
