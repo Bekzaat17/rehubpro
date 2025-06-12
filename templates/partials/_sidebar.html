@@ -2,8 +2,21 @@
     <h4 class="text-white">{{ PROJECT_NAME }}</h4>
     <hr class="text-secondary">
     <ul class="nav nav-pills flex-column mb-auto">
-        <li><a href="{% url 'users:dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">🏠 Главная</a></li>
-        <li class="nav-item"><a href="{% url 'tasks:task_templates' %}" class="nav-link {% if request.resolver_match.url_name == 'task_templates' %}active{% endif %}">📋 Шаблоны заданий</a></li>
+        <li>
+            <a href="{% url 'users:dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+                🏠 Главная
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{% url 'tasks:task_templates' %}" class="nav-link {% if request.resolver_match.url_name == 'task_templates' %}active{% endif %}">
+                📋 Шаблоны заданий
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{% url 'tasks:resident_tasks' %}" class="nav-link {% if request.resolver_match.url_name == 'resident_tasks' %}active{% endif %}">
+                🧑‍🏫 Задания резидентов
+            </a>
+        </li>
         {# Добавишь другие ссылки здесь при необходимости #}
     </ul>
 </nav>

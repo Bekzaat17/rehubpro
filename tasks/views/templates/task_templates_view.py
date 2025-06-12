@@ -1,3 +1,5 @@
+#tasks/views/templates/task_templates_view.py
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView, View
 from django.http import JsonResponse

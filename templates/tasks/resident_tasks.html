@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>Задания резидентов</h2>
+  <table class="table table-hover mt-3" id="resident-task-table">
+    <thead>
+      <tr>
+        <th>ФИО резидента</th>
+        <th>Текущее задание</th>
+        <th>Статус</th>
+        <th>Назначено</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in resident_data %}
+        <tr class="resident-row" data-resident-id="{{ item.resident.id }}"
+            data-resident-name="{{ item.resident.full_name }}"
+            data-task-id="{{ item.latest_task.id|default:'' }}"
+            data-task-title="{{ item.latest_task.task.title|default:'—' }}"
+            data-task-status="{{ item.latest_task.status|default:'—' }}"
+            data-assigned-at="{{ item.latest_task.assigned_at|date:'d.m.Y H:i'|default:'—' }}">
+          <td>{{ item.resident.full_name }}</td>
+          <td>{{ item.latest_task.task.title|default:'—' }}</td>
+          <td>{{ item.latest_task.get_status_display|default:'—' }}</td>
+          <td>{{ item.latest_task.assigned_at|date:"d.m.Y H:i"|default:'—' }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Модальное окно -->
+<div class="modal fade" id="residentTaskModal" tabindex="-1" aria-labelledby="residentTaskModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="residentTaskModalLabel">Задание резидента</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Резидент:</strong> <span id="modalResidentName"></span></p>
+        <p><strong>Задание:</strong> <span id="modalTaskTitle"></span></p>
+        <p><strong>Статус:</strong> <span id="modalTaskStatus"></span></p>
+        <p><strong>Назначено:</strong> <span id="modalAssignedAt"></span></p>
+      </div>
+      <div class="modal-footer">
+        <button id="assignTaskBtn" class="btn btn-primary d-none">Назначить задание</button>
+        <button id="addProgressBtn" class="btn btn-success d-none">Добавить прогресс</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Модальное окно: Добавить прогресс -->
+<div class="modal fade" id="addProgressModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="progressForm">
+        <div class="modal-header">
+          <h5 class="modal-title">Добавить прогресс</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+        </div>
+        <div class="modal-body">
+          <select class="form-select mb-2" name="stage" required>
+            <option value="">Выберите этап</option>
+            <option value="writing">Пишет</option>
+            <option value="submitting">Сдаёт</option>
+            <option value="completed">Завершено</option>
+          </select>
+          <textarea class="form-control" name="comment" placeholder="Комментарий"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success">Сохранить</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Модальное окно: Назначить задание -->
+<div class="modal fade" id="assignTaskModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="assignForm">
+        <div class="modal-header">
+          <h5 class="modal-title">Назначить задание</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+        </div>
+        <div class="modal-body">
+          <select class="form-select mb-2" name="task_id" required>
+            <!-- сюда будем подгружать задания через JS -->
+          </select>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Назначить</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/tasks/progress_modal.js' %}"></script>
+{% endblock %}
