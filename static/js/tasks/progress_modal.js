@@ -39,7 +39,6 @@ document.addEventListener("DOMContentLoaded", function () {
         addProgressBtn.onclick = () => openAddProgressForm(taskId);
       }
 
-      console.log(123456);
       // В конце функции .resident-row click:
       fetch(`/tasks/progress-history/resident/${residentId}`)
         .then(res => res.json())
@@ -145,8 +144,6 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function renderProgressHistory(history) {
-    console.log(123);
-    console.log(history);
     const modalBody = document.querySelector("#residentTaskModal .modal-body");
 
     // Удалим старый блок, если есть
@@ -172,7 +169,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const progressesHtml = taskItem.progresses.map(p => `
         <div class="border rounded p-2 mb-2">
-          <div><strong>Этап:</strong> ${p.stage}</div>
+          <div>
+            <strong>Этап:</strong> 
+            ${getStatusIcon(p.stage)} ${p.stage}
+          </div>
           <div><strong>Комментарий:</strong> ${p.comment || "—"}</div>
           <div class="text-muted"><small>${p.created_at}</small></div>
         </div>
@@ -193,5 +193,18 @@ document.addEventListener("DOMContentLoaded", function () {
         </div>
       `);
     });
+  }
+
+  // 👇 Вспомогательная функция для иконок по статусу
+  function getStatusIcon(stage) {
+    switch (stage) {
+      case "completed":
+        return "✅";
+      case "submitting":
+        return "🕐";
+      case "writing":
+      default:
+        return "✍️";
+    }
   }
 });
