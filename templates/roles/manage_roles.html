@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block content %}
+<div class="container mt-4">
+  <h2>Управление ролями резидентов</h2>
+
+  <div class="mb-3">
+    <button class="btn btn-success" id="addRoleBtn">➕ Добавить новую роль</button>
+  </div>
+
+  <table class="table table-bordered">
+    <thead class="table-light">
+      <tr>
+        <th>Название</th>
+        <th>Slug</th>
+        <th>Описание</th>
+        <th>Действия</th>
+      </tr>
+    </thead>
+    <tbody id="rolesTableBody">
+      {% for role in resident_roles %}
+        <tr data-role-id="{{ role.id }}">
+          <td>{{ role.name }}</td>
+          <td>{{ role.slug }}</td>
+          <td>{{ role.description|default:"—" }}</td>
+          <td>
+            <button class="btn btn-sm btn-primary edit-btn">✏️</button>
+            <button class="btn btn-sm btn-danger delete-btn">🗑️</button>
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="4" class="text-center"><em>Нет ролей</em></td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Модальное окно -->
+<div class="modal fade" id="roleModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Роль</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+      </div>
+      <div class="modal-body">
+        <form id="roleForm">
+          {% csrf_token %}
+          <input type="hidden" id="roleId" name="id">
+          <div class="mb-3">
+            <label for="roleName" class="form-label">Название</label>
+            <input type="text" class="form-control" id="roleName" name="name" required>
+          </div>
+          <div class="mb-3">
+            <label for="roleSlug" class="form-label">Slug</label>
+            <input type="text" class="form-control" id="roleSlug" name="slug">
+          </div>
+          <div class="mb-3">
+            <label for="roleDescription" class="form-label">Описание</label>
+            <textarea class="form-control" id="roleDescription" name="description" rows="3"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Сохранить</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/roles/manage_roles.js' %}"></script>
+{% endblock %}

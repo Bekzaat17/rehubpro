@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'lectures',
     'references',
     'reports',
+    'roles',
 ]
 
 MIDDLEWARE = [

@@ -17,6 +17,16 @@
                 🧑‍🏫 Задания резидентов
             </a>
         </li>
-        {# Добавишь другие ссылки здесь при необходимости #}
+
+        <li class="nav-item">
+            <a href="{% url 'roles:manage_roles' %}" class="nav-link {% if request.resolver_match.url_name == 'manage_roles' %}active{% endif %}">
+                ⚙️ Настройки ролей
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{% url 'roles:assign_roles' %}" class="nav-link {% if request.resolver_match.url_name == 'assign_roles' %}active{% endif %}">
+                🧑‍🔧 Роли резидентов
+            </a>
+        </li>
     </ul>
 </nav>

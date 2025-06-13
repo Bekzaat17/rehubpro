@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>Назначение ролей резидентам</h2>
+  <table class="table table-striped" id="residentsTable">
+    <thead>
+      <tr>
+        <th>ФИО</th>
+        <th>Текущие роли</th>
+        <th>Дата назначения</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for resident in residents %}
+        <tr data-resident-id="{{ resident.id }}" class="resident-row" style="cursor:pointer">
+          <td>{{ resident.full_name }}</td>
+          <td>{% for asg in resident.role_assignments.all %}{{ asg.role.name }}{% if not forloop.last %}, {% endif %}{% empty %}<em>—</em>{% endfor %}</td>
+          <td>{% with latest=resident.role_assignments.first %}{% if latest %}{{ latest.assigned_at|date:"DATE_FORMAT" }}{% else %}—{% endif %}{% endwith %}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Контейнер для модалки -->
+<div class="modal fade" id="roleModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content" id="roleModalContent"></div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/roles/role_modal.js' %}"></script>
+{% endblock %}
