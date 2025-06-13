@@ -1,3 +1,4 @@
+# references/models/resident_role.py
 from django.db import models
 from .base_reference_item import BaseReferenceItem
 
