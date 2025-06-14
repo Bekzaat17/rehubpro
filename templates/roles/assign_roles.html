@@ -16,7 +16,13 @@
       {% for resident in residents %}
         <tr data-resident-id="{{ resident.id }}" class="resident-row" style="cursor:pointer">
           <td>{{ resident.full_name }}</td>
-          <td>{% for asg in resident.role_assignments.all %}{{ asg.role.name }}{% if not forloop.last %}, {% endif %}{% empty %}<em>—</em>{% endfor %}</td>
+          <td>
+              {% for assignment in resident.active_roles %}
+                {{ assignment.role.name }}<br>
+              {% empty %}
+                —  <!-- если нет активных ролей -->
+              {% endfor %}
+          </td>
           <td>{% with latest=resident.role_assignments.first %}{% if latest %}{{ latest.assigned_at|date:"DATE_FORMAT" }}{% else %}—{% endif %}{% endwith %}</td>
         </tr>
       {% endfor %}

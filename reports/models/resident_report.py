@@ -1,4 +1,4 @@
-# rehabpro/reports/models/resident_report.py
+# rehubpro/reports/models/resident_report.py
 
 from django.db import models
 from django.core.exceptions import ValidationError
