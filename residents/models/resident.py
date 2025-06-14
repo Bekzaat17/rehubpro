@@ -15,6 +15,7 @@ class Resident(models.Model):
         verbose_name="Тип зависимости"
     )
     notes = models.TextField(blank=True, null=True, verbose_name="Заметки")
+    is_active = models.BooleanField(default=True)
 
     class Meta:
         verbose_name = "Резидент"

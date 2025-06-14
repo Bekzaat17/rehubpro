@@ -1,98 +1,78 @@
-# rehubpro/reports/models/resident_report.py
-
 from django.db import models
-from django.core.exceptions import ValidationError
+from django.conf import settings
+from django.utils import timezone
+
 from residents.models import Resident
-from users.models import User
-from references.models import (
-    CharacterTrait,
-    ResidentRole,
-    DailyDynamics,
-    Motivation,
-    PhysicalState,
-    EmotionalState,
-    FamilyActivity,
-    MrpActivity,
-)
+from references.models.emotional_state import EmotionalState
+from references.models.physical_state import PhysicalState
+from references.models.motivation import Motivation
+from references.models.daily_dynamics import DailyDynamics
+from references.models.character_trait import CharacterTrait
+from references.models.family_activity import FamilyActivity
+from references.models.mrp_activity import MrpActivity
+
 
 class ResidentReport(models.Model):
-    resident = models.ForeignKey(Resident, on_delete=models.CASCADE)
-    created_by = models.ForeignKey(User, on_delete=models.PROTECT)
-    created_at = models.DateTimeField(auto_now_add=True)
+    """
+    Ежедневный отчёт по резиденту, заполняемый консультантом.
+    Один отчёт — на одного резидента за день.
+    """
 
-    # Эмоциональное состояние (один вариант)
-    emotional_state = models.ForeignKey(
-        EmotionalState,
-        on_delete=models.PROTECT,
-        related_name="emotional_reports"
+    resident = models.ForeignKey(
+        Resident, on_delete=models.CASCADE, related_name="daily_reports"
+    )
+    date = models.DateField(default=timezone.localdate)
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="resident_reports_created"
     )
 
-    # Физическое состояние и жалобы
-    physical_state = models.ForeignKey(
-        PhysicalState,
-        on_delete=models.PROTECT,
-        related_name="physical_reports"
-    )
-    physical_complaints = models.TextField(blank=True)
+    emotional_state = models.ForeignKey(EmotionalState, on_delete=models.SET_NULL, null=True)
+    physical_state = models.ForeignKey(PhysicalState, on_delete=models.SET_NULL, null=True)
+    motivation = models.ForeignKey(Motivation, on_delete=models.SET_NULL, null=True)
+    daily_dynamics = models.ForeignKey(DailyDynamics, on_delete=models.SET_NULL, null=True)
 
-    # Активности
-    family_activity = models.ForeignKey(
-        FamilyActivity,
-        on_delete=models.PROTECT
-    )
-    mrp_activity = models.ForeignKey(
-        MrpActivity,
-        on_delete=models.PROTECT
-    )
-
-    # УСТС
-    usts_info_shared = models.BooleanField()
-    usts_format_followed = models.BooleanField()
-    usts_consequences = models.TextField(blank=True)
-
-    # Мотивация
-    motivation = models.ForeignKey(
-        Motivation,
-        on_delete=models.PROTECT
-    )
-
-    # Динамика в процентах
-    dynamic_percent = models.PositiveIntegerField()
-
-    # Характер: достоинства и дефекты (многие ко многим)
-    character_traits = models.ManyToManyField(
+    positive_traits = models.ManyToManyField(
         CharacterTrait,
-        related_name="reports"
+        related_name="positive_reports",
+        blank=True,
+        help_text="Отмеченные достоинства характера"
+    )
+    negative_traits = models.ManyToManyField(
+        CharacterTrait,
+        related_name="negative_reports",
+        blank=True,
+        help_text="Отмеченные дефекты характера"
     )
 
-    # Функции
-    resident_role = models.ManyToManyField(
-        ResidentRole,
-        related_name="reports"
-    )
+    mrp_activity = models.ForeignKey(MrpActivity, on_delete=models.SET_NULL, null=True, blank=True)
+    family_activity = models.ForeignKey(FamilyActivity, on_delete=models.SET_NULL, null=True, blank=True)
 
-    # Дополнительные заметки
-    notes = models.TextField(blank=True)
-
-    # Общая динамика (radio/select)
-    dynamic_summary = models.ForeignKey(
-        DailyDynamics,
-        on_delete=models.PROTECT,
-        related_name="summary_reports"
-    )
+    comment = models.TextField(blank=True)
 
     class Meta:
-        verbose_name = "Ежедневный отчёт"
-        verbose_name_plural = "Ежедневные отчёты"
-
-    def clean(self):
-        """Проверка валидности по типу справочников"""
-        for trait in self.character_traits.all():
-            if trait.type.slug not in ["dostoinstvo", "defekt"]:
-                raise ValidationError("Недопустимый тип характера")
-
-        if self.dynamic_percent > 100:
-            raise ValidationError("Динамика не может превышать 100%")
+        unique_together = ("resident", "date")
+        ordering = ["-date"]
+        verbose_name = "Ежедневный отчет"
+        verbose_name_plural = "Ежедневные отчеты"
 
     def __str__(self):
-        return f"Отчёт по {self.resident.full_name} от {self.created_at.date()}"
+        return f"{self.resident} — {self.date}"
+
+    def is_filled(self) -> bool:
+        """
+        Проверяет, заполнены ли все необходимые поля отчёта.
+        Используется в UI для отображения состояния карточки.
+        """
+        return all([
+            self.emotional_state is not None,
+            self.physical_state is not None,
+            self.motivation is not None,
+            self.daily_dynamics is not None,
+            self.comment.strip() != "",
+            self.mrp_activity is not None,
+            self.family_activity is not None,
+            self.positive_traits.exists() or self.negative_traits.exists()
+        ])

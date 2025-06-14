@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block title %}Заполнение отчётов{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Заполнение отчётов за сегодня</h1>
+
+<div class="row">
+  {% for item in reports %}
+    <div class="col-md-6">
+      <div class="card mb-4 report-card" id="report-card-{{ item.report_id }}"
+           style="border-left: 5px solid {% if item.is_filled %}green{% else %}gray{% endif %};">
+
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <strong>{{ item.resident.full_name }}</strong>
+          {% if not item.can_edit %}
+            <span class="badge bg-secondary">Просмотр</span>
+          {% endif %}
+        </div>
+
+        <div class="card-body">
+          {% if item.can_edit %}
+            <form class="report-form" data-report-id="{{ item.report_id }}">
+              {% csrf_token %}
+              {{ item.form.as_p }}
+              <button type="submit" class="btn btn-primary-custom">Сохранить</button>
+            </form>
+            <div id="error-box-{{ item.report_id }}" class="mt-2 alert alert-danger" style="display:none;"></div>
+          {% else %}
+            <div class="readonly-report">
+              {{ item.form.as_p }}
+            </div>
+          {% endif %}
+        </div>
+
+      </div>
+    </div>
+  {% empty %}
+    <p>На сегодня нет доступных отчётов для заполнения.</p>
+  {% endfor %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/reports/reports.js' %}"></script>
+{% endblock %}
