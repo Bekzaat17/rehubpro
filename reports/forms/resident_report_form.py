@@ -4,6 +4,7 @@ from references.models import (
     EmotionalState, PhysicalState, Motivation, DailyDynamics,
     MrpActivity, FamilyActivity, CharacterTrait
 )
+from references.models.character_trait import TraitType
 
 
 class ResidentReportForm(forms.Form):
@@ -40,6 +41,36 @@ class ResidentReportForm(forms.Form):
         self.task_comments = {}      # {task_id: comment}
         self.role_statuses = {}      # {role_id: status}
         self._init_dynamic_fields()
+        # --- УСТС (утреннее собрание ТС) ---
+        self.fields["usts_info_shared"] = forms.ChoiceField(
+            label="Информацию подает УСТС:",
+            choices=[
+                ("true", "Ровно"),
+                ("false", "Не ровно"),
+            ],
+            widget=forms.RadioSelect,
+            required=False
+        )
+
+        self.fields["usts_format_followed"] = forms.ChoiceField(
+            label="Имеет формат УСТС:",
+            choices=[
+                ("true", "Имеет"),
+                ("false", "Не имеет"),
+            ],
+            widget=forms.RadioSelect,
+            required=False
+        )
+
+        self.fields["usts_comment"] = forms.CharField(
+            label="Комментарий по УТС",
+            required=False,
+            widget=forms.Textarea(attrs={"class": "form-control", "rows": 3})
+        )
+
+        # 👉 Фильтрация черт характера по типу
+        self.fields["positive_traits"].queryset = CharacterTrait.objects.filter(type=TraitType.STRENGTH)
+        self.fields["negative_traits"].queryset = CharacterTrait.objects.filter(type=TraitType.DEFECT)
 
     def _init_dynamic_fields(self):
         """
@@ -87,6 +118,16 @@ class ResidentReportForm(forms.Form):
 
     def clean(self):
         cleaned_data = super().clean()
+
+        # Преобразуем строки в bool
+        for field in ["usts_info_shared", "usts_format_followed"]:
+            value = cleaned_data.get(field)
+            if value == "true":
+                cleaned_data[field] = True
+            elif value == "false":
+                cleaned_data[field] = False
+            else:
+                cleaned_data[field] = None  # На случай пустого значения
 
         # Собираем task_comments
         for name, value in self.cleaned_data.items():

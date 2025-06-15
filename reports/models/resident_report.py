@@ -50,6 +50,20 @@ class ResidentReport(models.Model):
     mrp_activity = models.ForeignKey(MrpActivity, on_delete=models.SET_NULL, null=True, blank=True)
     family_activity = models.ForeignKey(FamilyActivity, on_delete=models.SET_NULL, null=True, blank=True)
 
+    # --- утреннее собрание терапевтического сообщества ---
+    usts_info_shared = models.BooleanField(
+        default=False,
+        help_text="Информацию подает (ровно / не ровно)"
+    )
+    usts_format_followed = models.BooleanField(
+        default=False,
+        help_text="Имеет ли формат УСТС"
+    )
+    usts_comment = models.TextField(
+        blank=True,
+        help_text="Комментарий по УСТС"
+    )
+
     comment = models.TextField(blank=True)
 
     class Meta:
