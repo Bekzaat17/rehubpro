@@ -6,8 +6,9 @@ from django.utils import timezone
 from django.core.exceptions import ValidationError
 
 from reports.models.resident_report import ResidentReport
-from reports.forms.resident_report_form import ResidentReportForm
+# from reports.forms.resident_report_form import ResidentReportForm # Factory will provide this
 from reports.services.report_validator import ReportValidator
+from reports.factories.resident_report_form_factory import ResidentReportFormFactory
 
 
 class SaveReportView(View):
@@ -15,6 +16,11 @@ class SaveReportView(View):
     Сохраняет отчёт по резиденту (AJAX).
     Только на текущую дату.
     """
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        # Instantiate the factory once if it's stateless or stores repos internally
+        self.form_factory = ResidentReportFormFactory()
 
     def post(self, request, report_id):
         try:
@@ -28,11 +34,11 @@ class SaveReportView(View):
                 "errors": "Редактирование отчёта возможно только в день заполнения."
             })
 
-        # 🔧 Используем резидента и дату из существующего отчёта
-        form = ResidentReportForm(
-            request.POST,
+        # Use the factory to create the form
+        form = self.form_factory.create(
             resident=report.resident,
-            date=report.date
+            date=report.date,
+            request_data=request.POST # Pass request.POST for bound form
         )
 
         if form.is_valid():
@@ -49,4 +55,6 @@ class SaveReportView(View):
 
             return JsonResponse({"success": True})
         else:
-            return JsonResponse({"success": False, "errors": form.errors}, status=400)
+            # Ensure form.errors is serializable for JsonResponse
+            errors = form.errors.as_json() if hasattr(form.errors, 'as_json') else str(form.errors)
+            return JsonResponse({"success": False, "errors": errors}, status=400)
