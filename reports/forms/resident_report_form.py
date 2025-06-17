@@ -32,7 +32,7 @@ class ResidentReportForm(forms.Form):
     mrp_activity = forms.ModelChoiceField(queryset=MrpActivity.objects.all(), required=False)
     family_activity = forms.ModelChoiceField(queryset=FamilyActivity.objects.all(), required=False)
 
-    comment = forms.CharField(widget=forms.Textarea, required=False)
+    comment = forms.CharField(widget=forms.Textarea(attrs={"rows": 3, "class": "form-control"}), required=False)
 
     def __init__(self, *args, resident=None, date=None, **kwargs):
         super().__init__(*args, **kwargs)

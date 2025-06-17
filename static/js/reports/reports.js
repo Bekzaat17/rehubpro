@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", function () {
   document.querySelectorAll(".report-form").forEach(form => {
     form.addEventListener("submit", function (event) {
       event.preventDefault();
+
       const reportId = this.dataset.reportId;
       const formData = new FormData(this);
 
@@ -16,16 +17,24 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(data => {
           const card = document.getElementById(`report-card-${reportId}`);
           const errorBox = document.getElementById(`error-box-${reportId}`);
+          const collapseElement = document.getElementById(`collapse-${reportId}`);
+
+          // Удаляем старые классы и добавляем нужный
+          card.classList.remove("border-left-success", "border-left-danger");
 
           if (data.success) {
-            card.style.borderLeft = "5px solid green";
-            errorBox.style.display = "none";
+            card.classList.add("border-left-success");
+            errorBox.classList.add("d-none");
+            errorBox.innerText = "";
+
+            const bsCollapse = bootstrap.Collapse.getOrCreateInstance(collapseElement);
+            bsCollapse.hide();
           } else {
-            errorBox.style.display = "block";
+            card.classList.add("border-left-danger");
+            errorBox.classList.remove("d-none");
             errorBox.innerText = typeof data.errors === "string"
               ? data.errors
               : Object.values(data.errors).join(", ");
-            card.style.borderLeft = "5px solid red";
           }
         })
         .catch(error => {
