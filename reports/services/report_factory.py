@@ -49,7 +49,10 @@ class ReportFactory:
                 "daily_dynamics": data.get("daily_dynamics"),
                 "mrp_activity": data.get("mrp_activity"),
                 "family_activity": data.get("family_activity"),
-                "comment": data.get("comment", "").strip()
+                "comment": data.get("comment", "").strip(),
+                "usts_info_shared": data.get("usts_info_shared"),
+                "usts_format_followed": data.get("usts_format_followed"),
+                "usts_comment": data.get("usts_comment", "").strip(),
             }
         )
 
