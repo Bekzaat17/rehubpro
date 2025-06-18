@@ -1,6 +1,8 @@
 from .base_reference_item import BaseReferenceItem
+from .mixins.scorable_mixin import ScorableMixin
 
-class Motivation(BaseReferenceItem):
+
+class Motivation(ScorableMixin, BaseReferenceItem):
     """
     Мотивация на выздоровление.
     Например: Положительная, Вынужденная, Нулевая и т.д.

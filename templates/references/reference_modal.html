@@ -1,0 +1,29 @@
+<div class="modal fade" id="referenceModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="referenceForm">
+        <div class="modal-header">
+          <h5 class="modal-title">Редактирование</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" name="id">
+          <input type="hidden" name="reference">
+
+          <div class="mb-3">
+            <label class="form-label">Название</label>
+            <input type="text" name="name" class="form-control" required>
+          </div>
+
+          <div class="mb-3 score-group d-none">
+            <label class="form-label">Оценка</label>
+            <input type="number" name="score" class="form-control">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Сохранить</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -26,4 +26,5 @@ urlpatterns = [
     path('tasks/', include('tasks.urls', namespace='tasks')),
     path("roles/", include("roles.urls", namespace="roles")),
     path("reports/", include("reports.urls",  namespace="reports")),
+    path("references/", include("references.urls", namespace="references")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

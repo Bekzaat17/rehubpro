@@ -1,6 +1,8 @@
 from .base_reference_item import BaseReferenceItem
+from .mixins.scorable_mixin import ScorableMixin
 
-class EmotionalState(BaseReferenceItem):
+
+class EmotionalState(ScorableMixin, BaseReferenceItem):
     """
     Эмоциональное состояние резидента.
     Например: Ровное, Возбуждённое, Агрессивное и т.д.

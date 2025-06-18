@@ -1,6 +1,8 @@
 from .base_reference_item import BaseReferenceItem
+from .mixins.scorable_mixin import ScorableMixin
 
-class FamilyActivity(BaseReferenceItem):
+
+class FamilyActivity(ScorableMixin, BaseReferenceItem):
     """
     Активность резидента в семье.
     Например: Активен, Пассивен, Уклоняется и т.д.

@@ -1,0 +1,20 @@
+<div class="d-flex justify-content-end mb-2">
+  <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#referenceModal"
+          data-reference="{{ tab.slug }}" data-id="">
+    ➕ Добавить
+  </button>
+</div>
+
+<table class="table table-bordered table-sm reference-table" data-reference="{{ tab.slug }}">
+  <thead>
+    <tr>
+      <th>Название</th>
+      <th>Активен</th>
+      <th>Оценка</th>
+      <th>Действия</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- Динамически будет загружено JS -->
+  </tbody>
+</table>

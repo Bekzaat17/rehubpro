@@ -37,5 +37,10 @@
                 🧑‍🔧 Роли резидентов
             </a>
         </li>
+        <li class="nav-item">
+            <a href="{% url 'references:reference_dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'reference_dashboard' %}active{% endif %}">
+                🛠️ Настройки справочников
+            </a>
+        </li>
     </ul>
 </nav>

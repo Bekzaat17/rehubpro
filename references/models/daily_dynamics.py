@@ -1,6 +1,8 @@
 from .base_reference_item import BaseReferenceItem
+from .mixins.scorable_mixin import ScorableMixin
 
-class DailyDynamics(BaseReferenceItem):
+
+class DailyDynamics(ScorableMixin, BaseReferenceItem):
     """
     Оценка динамики в течение дня.
     Например: Положительная, Стабильная, Негативная.

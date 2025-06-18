@@ -1,6 +1,10 @@
 from .base_reference_item import BaseReferenceItem
+from .mixins.scorable_mixin import ScorableMixin
 
-class MrpActivity(BaseReferenceItem):
+#TODO from django.utils.translation import gettext_lazy as _ vezde sdelat localizaciu
+
+
+class MrpActivity(ScorableMixin, BaseReferenceItem):
     """
     Активность резидента на МРП.
     Например: Активен, Пассивен, Безучастен.
