@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Просмотр отчётов{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Просмотр отчётов за дату</h1>
+
+<form method="get" class="mb-4 row g-3 align-items-end">
+  <div class="col-auto">
+    <label for="date" class="form-label mb-0">Дата:</label>
+    <input type="date" id="date" name="date" class="form-control" value="{{ selected_date|date:'Y-m-d' }}">
+  </div>
+  <div class="col-auto">
+    <button type="submit" class="btn btn-secondary-custom">Показать</button>
+  </div>
+</form>
+
+<div class="accordion" id="reportsAccordion">
+  {% for report in reports %}
+    <div class="accordion-item mb-3 border rounded shadow overflow-hidden" id="report-{{ report.resident.id }}">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed rounded-0" type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#collapse-{{ report.resident.id }}"
+                aria-expanded="false">
+          {{ forloop.counter }}. {{ report.resident.full_name }}
+        </button>
+      </h2>
+      <div id="collapse-{{ report.resident.id }}" class="accordion-collapse collapse">
+        <div class="accordion-body">
+          <div class="container-fluid">
+            <div class="row mb-2"><div class="col-md-4 fw-bold">🧠 Эмоциональное состояние:</div><div class="col-md-8">{{ report.emotional_state }}</div></div>
+            <div class="row mb-2"><div class="col-md-4 fw-bold">💪 Физическое состояние:</div><div class="col-md-8">{{ report.physical_state }}</div></div>
+            <div class="row mb-2"><div class="col-md-4 fw-bold">🎯 Мотивация:</div><div class="col-md-8">{{ report.motivation }}</div></div>
+            <div class="row mb-2"><div class="col-md-4 fw-bold">📈 Динамика:</div><div class="col-md-8">{{ report.daily_dynamics }}</div></div>
+            <div class="row mb-2"><div class="col-md-4 fw-bold">👥 Участие в МРП:</div><div class="col-md-8">{{ report.mrp_activity }}</div></div>
+            <div class="row mb-2"><div class="col-md-4 fw-bold">👨‍👩‍👧 Работа с семьёй:</div><div class="col-md-8">{{ report.family_activity }}</div></div>
+
+            <hr>
+
+            <div class="row mb-2"><div class="col-md-4 fw-bold">🌱 Позитивные черты:</div><div class="col-md-8">{{ report.positive_traits }}</div></div>
+            <div class="row mb-2"><div class="col-md-4 fw-bold">⚠️ Негативные черты:</div><div class="col-md-8">{{ report.negative_traits }}</div></div>
+
+            <hr>
+
+            <div class="row mb-2"><div class="col-md-4 fw-bold">📌 УСТС — Информация передана:</div><div class="col-md-8">{{ report.usts_info_shared }}</div></div>
+            <div class="row mb-2"><div class="col-md-4 fw-bold">📌 УСТС — Соблюдение формата:</div><div class="col-md-8">{{ report.usts_format_followed }}</div></div>
+            <div class="row mb-2"><div class="col-md-4 fw-bold">📌 Комментарий по УСТС:</div><div class="col-md-8">{{ report.usts_comment }}</div></div>
+
+            <hr>
+
+            <div class="row mb-2"><div class="col-md-4 fw-bold">💬 Общий комментарий:</div><div class="col-md-8">{{ report.comment }}</div></div>
+
+            {% if report.task_comments %}
+              <hr>
+              <div class="row">
+                <div class="col-md-12">
+                  <h6 class="mt-2">🗂 Комментарии по задачам:</h6>
+                  <ul>
+                    {% for task_name, comment in report.task_comments.items %}
+                      <li><strong>{{ task_name }}:</strong> {{ comment }}</li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              </div>
+            {% endif %}
+
+            {% if report.role_statuses %}
+              <hr>
+              <div class="row">
+                <div class="col-md-12">
+                  <h6 class="mt-2">👔 Статусы ролей:</h6>
+                  <ul>
+                    {% for role_name, status in report.role_statuses.items %}
+                      <li><strong>{{ role_name }}:</strong> {{ status }}</li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  {% empty %}
+    <p>Отчётов за выбранную дату нет.</p>
+  {% endfor %}
+</div>
+{% endblock %}

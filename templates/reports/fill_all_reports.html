@@ -12,14 +12,14 @@
 
 <div class="accordion" id="reportsAccordion">
   {% for item in reports %}
-    <div class="accordion-item {% if item.is_filled %}border-left-success{% else %}border-left-danger{% endif %}" id="report-card-{{ item.report_id }}">
+    <div class="accordion-item mb-3 rounded shadow overflow-hidden {% if item.is_filled %}border-success{% else %}border-danger{% endif %}" id="report-card-{{ item.report_id }}">
       <h2 class="accordion-header">
-        <button class="accordion-button collapsed"
+        <button class="accordion-button collapsed rounded-0"
                 type="button"
                 data-bs-toggle="collapse"
                 data-bs-target="#collapse-{{ item.report_id }}"
                 aria-expanded="false">
-          {{ item.resident.full_name }}
+          {{ forloop.counter }}. {{ item.resident.full_name }}
         </button>
       </h2>
       <div id="collapse-{{ item.report_id }}" class="accordion-collapse collapse">
