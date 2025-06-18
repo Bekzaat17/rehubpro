@@ -13,7 +13,7 @@ class ViewReportsByDateView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        raw_date = self.kwargs.get("date")
+        raw_date = self.request.GET.get("date")
         selected_date = parse_date(raw_date) or localdate()
         context["selected_date"] = selected_date
 

@@ -5,6 +5,7 @@ from reports.models.resident_report import ResidentReport
 from django.template.loader import render_to_string
 from weasyprint import HTML
 
+#TODO dobavit logo v export_pdf
 
 class ExportReportsView(View):
     """
