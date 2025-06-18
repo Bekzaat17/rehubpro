@@ -14,7 +14,10 @@ class ViewReportsByDateView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
 
         raw_date = self.request.GET.get("date")
-        selected_date = parse_date(raw_date) or localdate()
+        if raw_date:
+            selected_date = parse_date(raw_date)  # ← parse_date ждёт строку, всё ок
+        else:
+            selected_date = localdate()
         context["selected_date"] = selected_date
 
         reports = ResidentReport.objects.filter(date=selected_date)\
