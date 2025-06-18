@@ -1,31 +1,54 @@
-/* ✅ Статусная рамка по периметру */
-.accordion-item {
+/* 🎯 Карточка-обёртка */
+.card {
   border: 2px solid transparent;
+  border-radius: 0.5rem;
   transition: border-color 0.3s ease;
-  border-radius: 0.375rem;
-  padding-left: 0;
+  overflow: visible;
 }
 
+/* 🟢 Заполнен */
 .border-success {
-  border-color: #198754 !important; /* Bootstrap-зелёный */
+  border-color: #198754 !important;
 }
 
+/* 🔴 Не заполнен */
 .border-danger {
-  border-color: #dc3545 !important; /* Bootstrap-красный */
+  border-color: #dc3545 !important;
 }
 
-/* 🔻 Стрелка вниз / вверх */
-.accordion-button::after {
-  transform: rotate(0deg);
-  transition: transform 0.2s ease-in-out;
+/* 🧩 Заголовок карточки (светлый фон, тёмный текст) */
+.card-header {
+  background-color: #f8f9fa;   /* светло-серый фон */
+  color: #212529;              /* тёмно-серый текст */
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+  padding: 0.75rem 1rem;
 }
 
-.accordion-button:not(.collapsed)::after {
-  transform: rotate(180deg);
+/* Кнопка внутри заголовка */
+.toggle-collapse-btn {
+  color: inherit;               /* наследует цвет от card-header */
+  text-decoration: none;
+  font-weight: 500;
 }
 
-.accordion-button:focus {
-  box-shadow: none;
+.toggle-collapse-btn:hover {
+  color: #0d6efd;               /* Bootstrap-синий при наведении */
+}
+
+/* 📄 Тело карточки */
+.card-body {
+  background-color: #fff;
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+  padding: 1rem;
+}
+
+/* 📦 Обёртка collapse — нижние углы не обрезаются */
+.collapse {
+  overflow: hidden;
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
 }
 
 /* 🏷️ Метки и формы */
@@ -57,7 +80,29 @@ textarea {
   margin: 0;
 }
 
-/* 📤 Кнопка "Сохранить" справа */
+/* 💾 Кнопка "Сохранить" */
 .report-form .btn-primary-custom {
   float: right;
+}
+
+/* ✅ Углы карточки: цельный блок */
+.card {
+  border-radius: 0.5rem;
+  overflow: hidden; /* важно */
+}
+
+/* Убираем нижние радиусы у заголовка */
+.card-header {
+  border-bottom: 1px solid #dee2e6;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+/* Убираем верхние радиусы у collapse */
+.collapse {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+  overflow: hidden;
 }
