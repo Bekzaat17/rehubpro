@@ -1,0 +1,1 @@
+from .main import analytics_main_view
