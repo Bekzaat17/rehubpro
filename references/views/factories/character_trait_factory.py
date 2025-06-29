@@ -7,7 +7,11 @@ class CharacterTraitFactory(BaseReferenceFactory):
         return CharacterTrait
 
     def get_form(self):
-        return CharacterTraitForm
+        def form_wrapper(*args, **kwargs):
+            kwargs["trait_type"] = self.get_trait_type()
+            return CharacterTraitForm(*args, **kwargs)
+
+        return form_wrapper
 
     def get_verbose_name(self):
         return "Черты характера"

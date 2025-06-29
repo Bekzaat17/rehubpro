@@ -6,13 +6,15 @@ document.addEventListener("DOMContentLoaded", () => {
   // Загружаем данные справочников
   tables.forEach((table) => {
     const reference = table.dataset.reference;
-    fetch(`/references/api/${reference}/`)
+    const traitType = table.dataset.traitType || "";
+
+    fetch(`/references/api/${reference}/?type=${traitType}`)
       .then((r) => r.json())
       .then((data) => {
         const tbody = table.querySelector("tbody");
         tbody.innerHTML = "";
         data.data.forEach((item) => {
-          const row = createRow(item, reference);
+          const row = createRow(item, reference, traitType);
           tbody.appendChild(row);
         });
       });
@@ -23,8 +25,13 @@ document.addEventListener("DOMContentLoaded", () => {
     btn.addEventListener("click", () => {
       form.reset();
       form.reference.value = btn.dataset.reference;
+      form.trait_type && (form.trait_type.value = btn.dataset.traitType || "");
       form.id.value = "";
-      document.querySelector(".score-group").classList.toggle("d-none", !usesScore(btn.dataset.reference));
+
+      document.querySelector(".score-group").classList.toggle(
+        "d-none",
+        !usesScore(btn.dataset.reference)
+      );
     });
   });
 
@@ -35,12 +42,18 @@ document.addEventListener("DOMContentLoaded", () => {
       form.name.value = data.name;
       form.id.value = data.id;
       form.reference.value = e.target.dataset.reference;
+
       if ("score" in data) {
         document.querySelector(".score-group").classList.remove("d-none");
         form.score.value = data.score;
       } else {
         document.querySelector(".score-group").classList.add("d-none");
       }
+
+      if ("type" in data && form.trait_type) {
+        form.trait_type.value = data.type;
+      }
+
       modal.show();
     }
   });
@@ -49,7 +62,11 @@ document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener("click", (e) => {
     if (e.target.classList.contains("btn-delete")) {
       if (!confirm("Отключить элемент?")) return;
-      fetch(`/references/api/${e.target.dataset.reference}/`, {
+
+      const reference = e.target.dataset.reference;
+      const traitType = e.target.dataset.traitType || "";
+
+      fetch(`/references/api/${reference}/?type=${traitType}`, {
         method: "DELETE",
         body: JSON.stringify({ id: e.target.dataset.id }),
       }).then(() => location.reload());
@@ -60,8 +77,10 @@ document.addEventListener("DOMContentLoaded", () => {
   form.addEventListener("submit", (e) => {
     e.preventDefault();
     const reference = form.reference.value;
+    const traitType = form.trait_type ? form.trait_type.value : "";
+
     const data = new FormData(form);
-    fetch(`/references/api/${reference}/`, {
+    fetch(`/references/api/${reference}/?type=${traitType}`, {
       method: "POST",
       body: data,
     })
@@ -69,7 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .then(() => location.reload());
   });
 
-  function createRow(item, reference) {
+  function createRow(item, reference, traitType = "") {
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${item.name}</td>
@@ -78,10 +97,12 @@ document.addEventListener("DOMContentLoaded", () => {
       <td>
         <button class="btn btn-sm btn-warning btn-edit" 
                 data-item='${JSON.stringify(item)}' 
-                data-reference="${reference}">✏️</button>
+                data-reference="${reference}"
+                data-trait-type="${traitType}">✏️</button>
         <button class="btn btn-sm btn-danger btn-delete" 
                 data-id="${item.id}" 
-                data-reference="${reference}">🗑️</button>
+                data-reference="${reference}"
+                data-trait-type="${traitType}">🗑️</button>
       </td>
     `;
     return tr;
@@ -89,12 +110,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function usesScore(reference) {
     return [
-        "emotionalstate",
-        "dailydynamics",
-        "motivation",
-        "familyactivity",
-        "mrpactivity",
-        "physicalstate"
-    ].includes(reference); // 👈 можно вынести в global config
+      "emotionalstate",
+      "dailydynamics",
+      "motivation",
+      "familyactivity",
+      "mrpactivity",
+      "physicalstate",
+    ].includes(reference);
   }
+
+  // 🔁 Горизонтальный скролл по стрелкам
+  document.querySelector(".scroll-left")?.addEventListener("click", () => {
+    document.getElementById("referenceTabs").scrollBy({ left: -200, behavior: "smooth" });
+  });
+
+  document.querySelector(".scroll-right")?.addEventListener("click", () => {
+    document.getElementById("referenceTabs").scrollBy({ left: 200, behavior: "smooth" });
+  });
 });

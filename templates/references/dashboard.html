@@ -7,21 +7,35 @@
 <div class="container mt-4">
   <h1 class="mb-4">Справочники</h1>
 
-  <!-- Вкладки -->
-  <ul class="nav nav-tabs" id="referenceTabs" role="tablist">
-    {% for tab in reference_tabs %}
-      <li class="nav-item" role="presentation">
-        <button class="nav-link {% if forloop.first %}active{% endif %}"
-                id="{{ tab.slug }}-tab"
-                data-bs-toggle="tab"
-                data-bs-target="#{{ tab.slug }}"
-                type="button"
-                role="tab">
-          {{ tab.verbose }}
-        </button>
-      </li>
-    {% endfor %}
-  </ul>
+  <!-- Обёртка со стрелками -->
+  <div class="d-flex align-items-center position-relative mb-2">
+    <!-- Левая стрелка -->
+    <button type="button" class="btn btn-light position-absolute start-0 z-1 scroll-left" style="height: 100%; border: none;">
+      ◀
+    </button>
+
+    <!-- Вкладки -->
+    <ul class="nav nav-tabs flex-nowrap overflow-auto mx-5" id="referenceTabs" role="tablist" style="white-space: nowrap; scroll-behavior: smooth;">
+      {% for tab in reference_tabs %}
+        <li class="nav-item" role="presentation">
+          <button class="nav-link {% if forloop.first %}active{% endif %}"
+                  id="{{ tab.slug }}-tab"
+                  data-bs-toggle="tab"
+                  data-bs-target="#{{ tab.slug }}"
+                  type="button"
+                  role="tab"
+                  style="min-width: 180px;">
+            {{ tab.verbose }}
+          </button>
+        </li>
+      {% endfor %}
+    </ul>
+
+    <!-- Правая стрелка -->
+    <button type="button" class="btn btn-light position-absolute end-0 z-1 scroll-right" style="height: 100%; border: none;">
+      ▶
+    </button>
+  </div>
 
   <!-- Контент вкладок -->
   <div class="tab-content mt-3" id="referenceTabsContent">

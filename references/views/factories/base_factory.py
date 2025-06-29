@@ -22,3 +22,10 @@ class BaseReferenceFactory(ABC):
         Список полей, отображаемых в таблице.
         """
         return ["name", "is_active"]  # по умолчанию
+
+    def get_slug(self):
+        """
+        Уникальный slug, по умолчанию от имени модели.
+        Можно переопределить в дочерних фабриках.
+        """
+        return self.get_model().__name__.lower()
