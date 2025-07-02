@@ -1,6 +1,8 @@
 # analytics/charts/line_chart.py
+from analytics.charts.base import BaseChartBuilder
 
-class LineChartBuilder:
+
+class LineChartBuilder(BaseChartBuilder):
     def __init__(self):
         self._data = {}
         self._title = ""

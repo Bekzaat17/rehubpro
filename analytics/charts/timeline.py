@@ -1,15 +1,23 @@
 # analytics/charts/timeline.py
+from analytics.charts.base import BaseChartBuilder
 
-class TimelineBuilder:
-    chart_type = "timeline"
 
-    def __init__(self, data, title):
-        self.data = data
-        self.title = title
+class TimelineBuilder(BaseChartBuilder):
+    def __init__(self):
+        self._data = {}
+        self._title = ""
+
+    def set_data(self, data: dict):
+        self._data = data
+        return self
+
+    def set_title(self, title: str):
+        self._title = title
+        return self
 
     def build(self):
         return {
-            "type": self.chart_type,
-            "title": self.title,
-            "timeline": self.data.get("timeline", {})
+            "type": "timeline",
+            "title": self._title,
+            "timeline": self._data.get("timeline", {})
         }

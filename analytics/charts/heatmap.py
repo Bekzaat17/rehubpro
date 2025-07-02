@@ -1,4 +1,7 @@
-class HeatmapBuilder:
+from analytics.charts.base import BaseChartBuilder
+
+
+class HeatmapBuilder(BaseChartBuilder):
     def __init__(self):
         self._data = {}
         self._title = ""

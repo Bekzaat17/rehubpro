@@ -1,6 +1,8 @@
 # analytics/charts/bar_chart.py
+from analytics.charts.base import BaseChartBuilder
 
-class BarChartBuilder:
+
+class BarChartBuilder(BaseChartBuilder):
     def __init__(self):
         self._data = {}
         self._title = ""

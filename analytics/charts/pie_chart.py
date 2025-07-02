@@ -1,6 +1,8 @@
 # analytics/charts/pie_chart.py
+from analytics.charts.base import BaseChartBuilder
 
-class PieChartBuilder:
+
+class PieChartBuilder(BaseChartBuilder):
     def __init__(self):
         self._data = {}
         self._title = ""
