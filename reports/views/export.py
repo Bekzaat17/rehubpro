@@ -81,36 +81,32 @@ class ExportReportsView(View):
         content.append("=" * 40 + "\n")
 
         for i, report in enumerate(reports, 1):
-            resident = report.resident.full_name
+            resident = report["resident"].full_name
             content.append(f"{i}. Резидент: {resident}")
-            content.append(f"   Эмоциональное состояние: {report.emotional_state or '—'}")
-            content.append(f"   Физическое состояние: {report.physical_state or '—'}")
-            content.append(f"   Мотивация: {report.motivation or '—'}")
-            content.append(f"   Динамика: {report.daily_dynamics or '—'}")
-            content.append(f"   Участие в МРП: {report.mrp_activity or '—'}")
-            content.append(f"   Работа с семьёй: {report.family_activity or '—'}")
+            content.append(f"   Эмоциональное состояние: {report['emotional_state']}")
+            content.append(f"   Физическое состояние: {report['physical_state']}")
+            content.append(f"   Мотивация: {report['motivation']}")
+            content.append(f"   Динамика: {report['daily_dynamics']}")
+            content.append(f"   Участие в МРП: {report['mrp_activity']}")
+            content.append(f"   Работа с семьёй: {report['family_activity']}")
+            content.append(f"   🌱 Позитивные черты: {report['positive_traits']}")
+            content.append(f"   ⚠️ Негативные черты: {report['negative_traits']}")
+            content.append(f"   📌 УСТС — Информация передана: {report['usts_info_shared']}")
+            content.append(f"   📌 УСТС — Формат соблюдён: {report['usts_format_followed']}")
+            content.append(f"   📌 Комментарий по УСТС: {report['usts_comment']}")
+            content.append(f"   💬 Общий комментарий: {report['comment']}")
 
-            pos_traits = ", ".join(t.name for t in report.positive_traits.all()) or "—"
-            neg_traits = ", ".join(t.name for t in report.negative_traits.all()) or "—"
-            content.append(f"   🌱 Позитивные черты: {pos_traits}")
-            content.append(f"   ⚠️ Негативные черты: {neg_traits}")
-
-            content.append(f"   📌 УСТС — Информация передана: {'Да' if report.usts_info_shared else 'Нет'}")
-            content.append(f"   📌 УСТС — Формат соблюдён: {'Да' if report.usts_format_followed else 'Нет'}")
-            content.append(f"   📌 Комментарий по УСТС: {report.usts_comment or '—'}")
-            content.append(f"   💬 Общий комментарий: {report.comment or '—'}")
-
-            if report.task_comments.exists():
+            task_comments = report.get("task_comments", {})
+            if task_comments:
                 content.append("   🗂 Комментарии по задачам:")
-                for tc in report.task_comments.all():
-                    task_name = tc.assigned_task.task.title
-                    content.append(f"     - {task_name}: {tc.comment}")
+                for task_name, comment in task_comments.items():
+                    content.append(f"     - {task_name}: {comment}")
 
-            if report.role_statuses.exists():
+            role_statuses = report.get("role_statuses", {})
+            if role_statuses:
                 content.append("   👔 Статусы по ролям:")
-                for rs in report.role_statuses.all():
-                    role_name = rs.role_assignment.role.name
-                    content.append(f"     - {role_name}: {rs.get_status_display()}")
+                for role_name, status in role_statuses.items():
+                    content.append(f"     - {role_name}: {status}")
 
             content.append("\n" + "-" * 40 + "\n")
 
