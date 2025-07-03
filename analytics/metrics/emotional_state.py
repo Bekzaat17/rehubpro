@@ -13,9 +13,12 @@ class EmotionalStateMetric(BaseMetric):
                 if score is not None:
                     data[report.date].append(score)
 
-        # усреднённый score по каждому дню
         averaged = {
             date: round(sum(scores) / len(scores), 2)
             for date, scores in data.items()
         }
-        return averaged
+
+        return {
+            "title": "Эмоциональное состояние (по score)",
+            "data": averaged
+        }

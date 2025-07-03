@@ -19,6 +19,6 @@ class LineChartBuilder(BaseChartBuilder):
         return {
             "type": "line",
             "title": self._title,
-            "labels": list(map(str, self._data.keys())),  # даты как строки
-            "values": list(self._data.values()),
+            "labels": self._data.get("labels", []),
+            "values": self._data.get("values", []),
         }

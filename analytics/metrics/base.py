@@ -3,6 +3,7 @@
 from abc import ABC, abstractmethod
 from typing import Type
 from analytics.charts.base import BaseChartBuilder
+from reports.models import ResidentReport
 
 
 class BaseMetric(ABC):
@@ -16,3 +17,11 @@ class BaseMetric(ABC):
     def get_chart_builder_class(self) -> Type[BaseChartBuilder]:
         from analytics.charts.line_chart import LineChartBuilder
         return LineChartBuilder
+
+    @classmethod
+    def get_base_queryset(cls, filters):
+        return ResidentReport.objects.all()
+
+    @classmethod
+    def get_filter_field(cls):
+        return "date"  # По умолчанию — для ResidentReport

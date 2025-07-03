@@ -2,7 +2,6 @@
 
 from collections import defaultdict
 from .base import BaseMetric
-from analytics.charts.line_chart import LineChartBuilder
 
 class PhysicalStateMetric(BaseMetric):
     def calculate(self):
@@ -25,6 +24,3 @@ class PhysicalStateMetric(BaseMetric):
             "labels": list(map(str, averaged.keys())),
             "values": list(averaged.values())
         }
-
-    def get_chart_builder_class(self):
-        return LineChartBuilder

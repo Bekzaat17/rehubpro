@@ -19,6 +19,6 @@ class PieChartBuilder(BaseChartBuilder):
         return {
             "type": "pie",
             "title": self._title,
-            "labels": self._data["labels"],
-            "values": self._data["values"]
+            "labels": self._data.get("labels", []),
+            "values": self._data.get("values", []),
         }

@@ -2,7 +2,7 @@
 
 from collections import defaultdict
 from .base import BaseMetric
-from analytics.charts.line_chart import LineChartBuilder
+
 
 class FamilyActivityMetric(BaseMetric):
     def calculate(self):
@@ -16,15 +16,11 @@ class FamilyActivityMetric(BaseMetric):
                     daily_scores[report.date].append(score)
 
         averaged = {
-            date: round(sum(scores) / len(scores), 2)
+            str(date): round(sum(scores) / len(scores), 2)
             for date, scores in daily_scores.items()
         }
 
         return {
             "title": "Семейная активность (по score)",
-            "labels": list(map(str, averaged.keys())),
-            "values": list(averaged.values())
+            "data": averaged
         }
-
-    def get_chart_builder_class(self):
-        return LineChartBuilder

@@ -8,12 +8,14 @@ class ReportDirector:
         self.filters = filters
         self.metric_classes = metric_classes
 
-
     def run(self):
-        filtered = FilterAdapter(self.filters).apply(self.queryset)
         results = {}
 
         for MetricClass in self.metric_classes:
+            base_queryset = MetricClass.get_base_queryset(self.filters)
+            date_field = MetricClass.get_filter_field()
+            filtered = FilterAdapter(self.filters).apply(base_queryset, date_field=date_field)
+
             metric = MetricClass(filtered)
             data = metric.calculate()
 

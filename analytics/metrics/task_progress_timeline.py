@@ -14,7 +14,8 @@ class TaskProgressTimelineMetric(BaseMetric):
 
         for entry in self.queryset.select_related("assigned_task__task"):
             task = entry.assigned_task.task
-            timeline[entry.created_at.date()].append({
+            date_str = entry.created_at.date().isoformat()
+            timeline[date_str].append({
                 "task_title": task.title,
                 "task_type": task.task_type,
                 "stage": entry.get_stage_display(),
@@ -28,3 +29,12 @@ class TaskProgressTimelineMetric(BaseMetric):
 
     def get_chart_builder_class(self):
         return TimelineBuilder
+
+    @classmethod
+    def get_base_queryset(cls, filters):
+        from tasks.models.task_progress import TaskProgress
+        return TaskProgress.objects.all()
+
+    @classmethod
+    def get_filter_field(cls):
+        return "created_at"  # Для TaskProgress

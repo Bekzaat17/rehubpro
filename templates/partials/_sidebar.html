@@ -23,6 +23,11 @@
             </a>
         </li>
         <li class="nav-item">
+            <a href="{% url 'analytics:analytics_full_page' %}" class="nav-link {% if request.resolver_match.app_name == 'analytics' %}active{% endif %}">
+                📊 Аналитика
+            </a>
+        </li>
+        <li class="nav-item">
             <a href="{% url 'reports:view_by_date' date=now|date:"Y-m-d" %}" class="nav-link {% if request.resolver_match.url_name == 'view_by_date' %}active{% endif %}">
                 📅 Просмотр отчётов
             </a>

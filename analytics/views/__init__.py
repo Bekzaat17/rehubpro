@@ -1,1 +1,1 @@
-from .main import analytics_main_view
+from .main import analytics_main_view, analytics_full_page_view

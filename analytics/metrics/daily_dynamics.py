@@ -2,7 +2,7 @@
 
 from collections import defaultdict
 from .base import BaseMetric
-from analytics.charts.line_chart import LineChartBuilder
+
 
 class DailyDynamicsMetric(BaseMetric):
     def calculate(self):
@@ -22,9 +22,5 @@ class DailyDynamicsMetric(BaseMetric):
 
         return {
             "title": "Дневная динамика (по score)",
-            "labels": list(map(str, averaged.keys())),
-            "values": list(averaged.values())
+            "data": averaged
         }
-
-    def get_chart_builder_class(self):
-        return LineChartBuilder
