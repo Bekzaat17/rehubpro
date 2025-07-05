@@ -3,7 +3,6 @@
 from collections import defaultdict
 from .base import BaseMetric
 
-
 class DailyDynamicsMetric(BaseMetric):
     def calculate(self):
         daily_scores = defaultdict(list)
@@ -20,7 +19,13 @@ class DailyDynamicsMetric(BaseMetric):
             for date, scores in daily_scores.items()
         }
 
+        # Преобразуем в labels/values (с сортировкой по дате)
+        sorted_dates = sorted(averaged.keys())
+        labels = [str(date) for date in sorted_dates]
+        values = [averaged[date] for date in sorted_dates]
+
         return {
             "title": "Дневная динамика (по score)",
-            "data": averaged
+            "labels": labels,
+            "values": values
         }

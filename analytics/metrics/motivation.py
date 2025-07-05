@@ -19,8 +19,13 @@ class MotivationMetric(BaseMetric):
             for date, scores in daily_scores.items()
         }
 
+        # ⬇️ Обеспечиваем сортировку по дате
+        sorted_dates = sorted(averaged.keys())
+        labels = [str(date) for date in sorted_dates]
+        values = [averaged[date] for date in sorted_dates]
+
         return {
             "title": "Мотивация (по score)",
-            "labels": list(map(str, averaged.keys())),
-            "values": list(averaged.values())
+            "labels": labels,
+            "values": values
         }

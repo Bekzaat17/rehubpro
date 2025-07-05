@@ -19,8 +19,13 @@ class MRPActivityMetric(BaseMetric):
             for date, scores in daily_scores.items()
         }
 
+        # ⬇️ Сортировка по дате
+        sorted_dates = sorted(averaged.keys())
+        labels = [str(date) for date in sorted_dates]
+        values = [averaged[date] for date in sorted_dates]
+
         return {
             "title": "Активность на занятиях MRP (по score)",
-            "labels": list(map(str, averaged.keys())),
-            "values": list(averaged.values())
+            "labels": labels,
+            "values": values
         }
