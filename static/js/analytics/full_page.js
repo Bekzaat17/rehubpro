@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
   const form = document.getElementById("filter-form");
   const resultsDiv = document.getElementById("analytics-results");
+  const exportBtn = document.getElementById("export-button");
 
   if (!form || !resultsDiv) return;
 
@@ -14,6 +15,11 @@ document.addEventListener("DOMContentLoaded", function () {
       .then(res => res.json())
       .then(data => {
         resultsDiv.innerHTML = "";
+
+        // ✅ Активировать экспорт
+        if (exportBtn) {
+          exportBtn.disabled = false;
+        }
 
         for (const [metric, content] of Object.entries(data)) {
           const col = document.createElement("div");
@@ -40,6 +46,22 @@ document.addEventListener("DOMContentLoaded", function () {
         resultsDiv.innerHTML = `<p class="text-danger">Ошибка загрузки данных</p>`;
       });
   });
+
+  // 🔘 Обработчик кнопки "Экспорт"
+  if (exportBtn) {
+    exportBtn.addEventListener("click", function () {
+      const element = document.getElementById("analytics-results");
+      const opt = {
+        margin:       0.5,
+        filename:     'analytics.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+      };
+
+      html2pdf().set(opt).from(element).save();
+    });
+  }
 });
 
 function renderChart(ctx, content) {
