@@ -20,17 +20,17 @@ document.addEventListener("DOMContentLoaded", function () {
           const collapseElement = document.getElementById(`collapse-${reportId}`);
 
           // Удаляем старые классы и добавляем нужный
-          card.classList.remove("border-left-success", "border-left-danger");
+          card.classList.remove("border-success", "border-danger");
 
           if (data.success) {
-            card.classList.add("border-left-success");
+            card.classList.add("border-success");
             errorBox.classList.add("d-none");
             errorBox.innerText = "";
 
             const bsCollapse = bootstrap.Collapse.getOrCreateInstance(collapseElement);
             bsCollapse.hide();
           } else {
-            card.classList.add("border-left-danger");
+            card.classList.add("border-danger");
             errorBox.classList.remove("d-none");
             errorBox.innerText = typeof data.errors === "string"
               ? data.errors

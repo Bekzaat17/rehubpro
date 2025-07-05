@@ -16,7 +16,7 @@ class BaseReferenceView(LoginRequiredMixin, View):
     form_class = None     # Указывается в дочерних классах
 
     def get_queryset(self):
-        return self.model.objects.filter(is_active=True)
+        return self.model.objects.filter()
 
     def get(self, request):
         """
@@ -31,7 +31,7 @@ class BaseReferenceView(LoginRequiredMixin, View):
         Обработка создания или обновления элемента.
         """
         from django.http import QueryDict
-        data = QueryDict(request.body).dict()
+        data = request.POST.dict()
         instance = None
 
         if data.get("id"):

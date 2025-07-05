@@ -30,12 +30,11 @@
     </div>
   </form>
 
-  <!-- 📤 Кнопка экспорта -->
   <div class="text-end mb-3">
     <button class="btn btn-outline-secondary" disabled>📤 Экспорт (скоро)</button>
   </div>
 
-  <!-- 📊 Аналитика -->
+  <!-- 📊 Блок аналитики -->
   <div id="analytics-results" class="row gy-4">
     <p class="text-muted">Выберите фильтры и нажмите "Показать", чтобы увидеть аналитику.</p>
   </div>
@@ -43,21 +42,30 @@
 {% endblock %}
 
 {% block extra_js %}
-<!-- Chart.js CDN -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
 <style>
+  .analytics-block {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
   .chart-wrapper {
     position: relative;
     height: 350px;
-    max-width: 700px;
-    margin: 0 auto;
+    width: 100%;
   }
 
   @media (max-width: 768px) {
     .chart-wrapper {
       height: 300px;
     }
+  }
+
+  canvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
   }
 </style>
 
