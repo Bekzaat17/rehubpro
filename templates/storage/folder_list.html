@@ -1,0 +1,235 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Файловое хранилище{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+  {% if current_folder %}
+    {% url 'storage:folder_detail' current_folder.id as folder_action_url %}
+    {% url 'storage:file_actions' current_folder.id as file_action_url %}
+  {% else %}
+    {% url 'storage:root' as folder_action_url %}
+    {% url 'storage:file_actions_root' as file_action_url %}
+  {% endif %}
+
+  <!-- 🔘 Верхняя панель -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="btn-group">
+      <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#createFolderModal">📁 Новая папка</button>
+      <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#uploadFileModal">⬆ Загрузить файл</button>
+    </div>
+
+    <form method="get" class="d-flex">
+      <input type="text" name="q" value="{{ query }}" class="form-control me-2" placeholder="🔍 Поиск...">
+      <button class="btn btn-outline-secondary" type="submit">Искать</button>
+    </form>
+  </div>
+
+  <!-- 🧭 Хлебные крошки -->
+  <div class="d-flex align-items-center justify-content-between mt-2 mb-3" style="min-height: 40px;">
+    <!-- Назад -->
+    <div style="width: 90px;">
+      {% if current_folder %}
+        <a href="{% if current_folder.parent %}
+                    {% url 'storage:folder_detail' current_folder.parent.id %}
+                  {% else %}
+                    {% url 'storage:root' %}
+                  {% endif %}"
+           class="btn btn-sm btn-outline-secondary">
+          ⬅ Назад
+        </a>
+      {% endif %}
+    </div>
+
+    <!-- Путь -->
+    <nav aria-label="breadcrumb" class="flex-grow-1 ms-2">
+      <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item">
+          <a href="{% url 'storage:root' %}">🏠</a>
+        </li>
+        {% if current_folder %}
+          {% for ancestor in current_folder.get_ancestors %}
+            <li class="breadcrumb-item">
+              <a href="{% url 'storage:folder_detail' ancestor.id %}">{{ ancestor.name }}</a>
+            </li>
+          {% endfor %}
+          <li class="breadcrumb-item active" aria-current="page">{{ current_folder.name }}</li>
+        {% endif %}
+      </ol>
+    </nav>
+  </div>
+
+  <!-- 📋 Таблица -->
+  <div class="table-responsive">
+    <table class="table table-hover align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>Название</th>
+          <th>Тип</th>
+          <th>Размер</th>
+          <th>Дата</th>
+          <th class="text-end">Действия</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <!-- Папки -->
+        {% for folder in subfolders %}
+          <tr>
+            <td>
+              📁 <a href="{% url 'storage:folder_detail' folder.id %}">{{ folder.name }}</a>
+            </td>
+            <td>Папка</td>
+            <td>—</td>
+            <td>{{ folder.created_at|date:"Y-m-d H:i" }}</td>
+            <td class="text-end">
+              <button type="button"
+                      class="btn btn-sm btn-outline-secondary rename-btn"
+                      data-id="{{ folder.id }}"
+                      data-name="{{ folder.name }}"
+                      data-url="{{ folder_action_url }}"
+                      title="Переименовать">
+                ✏
+              </button>
+              <form method="post" action="{{ folder_action_url }}" class="d-inline ms-1">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="delete">
+                <input type="hidden" name="target_id" value="{{ folder.id }}">
+                <button class="btn btn-sm btn-outline-danger" title="Удалить">🗑</button>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+
+        <!-- Файлы -->
+        {% for file in files %}
+          <tr>
+            <td class="ps-4">📄 {{ file.name }}</td>
+            <td>{{ file.get_readable_type }}</td>
+            <td>{{ file.size_mb }} MB</td>
+            <td>{{ file.uploaded_at|date:"Y-m-d H:i" }}</td>
+            <td class="text-end">
+              {% if file.is_previewable %}
+                <a href="{{ file.file.url }}" target="_blank" class="btn btn-sm btn-outline-info" title="Предпросмотр">👁</a>
+              {% endif %}
+              <a href="{{ file.file.url }}" class="btn btn-sm btn-outline-success ms-1" download title="Скачать">⬇</a>
+              <button type="button"
+                      class="btn btn-sm btn-outline-secondary rename-btn ms-1"
+                      data-id="{{ file.id }}"
+                      data-name="{{ file.name }}"
+                      data-url="{{ file_action_url }}"
+                      title="Переименовать">
+                ✏
+              </button>
+              <form method="post" action="{{ file_action_url }}" class="d-inline ms-1">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="delete">
+                <input type="hidden" name="target_id" value="{{ file.id }}">
+                <button class="btn btn-sm btn-outline-danger" title="Удалить">🗑</button>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+
+        {% if not files and not subfolders %}
+          <tr>
+            <td colspan="5" class="text-center text-muted">Здесь пока ничего нет</td>
+          </tr>
+        {% endif %}
+
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 📁 Модалка: Новая папка -->
+<div class="modal fade" id="createFolderModal" tabindex="-1" aria-labelledby="createFolderLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form method="post" action="{{ folder_action_url }}" class="modal-content">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="create">
+      <div class="modal-header">
+        <h5 class="modal-title" id="createFolderLabel">Создать папку</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+      </div>
+      <div class="modal-body">
+        <input type="text" name="name" class="form-control" placeholder="Название папки" required>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-primary">Создать</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ⬆️ Модалка: Загрузить файл -->
+<div class="modal fade" id="uploadFileModal" tabindex="-1" aria-labelledby="uploadFileLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form method="post" enctype="multipart/form-data" action="{{ file_action_url }}" class="modal-content">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="upload">
+      <div class="modal-header">
+        <h5 class="modal-title" id="uploadFileLabel">Загрузить файл</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+      </div>
+      <div class="modal-body">
+        <input type="file" name="file" class="form-control" required>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-success">Загрузить</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ✏️ Модалка: Переименование -->
+<div class="modal fade" id="renameModal" tabindex="-1" aria-labelledby="renameModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form method="post" id="renameForm" class="modal-content">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="rename">
+      <input type="hidden" name="target_id" id="renameTargetId">
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="renameModalLabel">Переименовать</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+      </div>
+
+      <div class="modal-body">
+        <input type="text" name="name" id="renameInput" class="form-control" required>
+      </div>
+
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ⚙️ JS для модалки переименования -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const renameButtons = document.querySelectorAll(".rename-btn");
+    const renameForm = document.getElementById("renameForm");
+    const renameInput = document.getElementById("renameInput");
+    const renameTargetId = document.getElementById("renameTargetId");
+
+    renameButtons.forEach((btn) => {
+      btn.addEventListener("click", function () {
+        const targetId = this.dataset.id;
+        const currentName = this.dataset.name;
+        const formAction = this.dataset.url;
+
+        renameTargetId.value = targetId;
+        renameInput.value = currentName;
+        renameForm.action = formAction;
+
+        const renameModal = new bootstrap.Modal(document.getElementById("renameModal"));
+        renameModal.show();
+      });
+    });
+  });
+</script>
+{% endblock %}

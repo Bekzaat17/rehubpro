@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'references',
     'reports',
     'roles',
+    'storage',
 ]
 
 MIDDLEWARE = [
