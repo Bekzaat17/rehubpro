@@ -21,4 +21,5 @@ class LineChartBuilder(BaseChartBuilder):
             "title": self._title,
             "labels": self._data.get("labels", []),
             "values": self._data.get("values", []),
+            "value_labels": self._data.get("value_labels", []),  # 👈 добавили
         }

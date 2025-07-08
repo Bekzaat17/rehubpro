@@ -16,7 +16,6 @@ document.addEventListener("DOMContentLoaded", function () {
       .then(data => {
         resultsDiv.innerHTML = "";
 
-        // ✅ Активировать экспорт
         if (exportBtn) {
           exportBtn.disabled = false;
         }
@@ -47,16 +46,15 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   });
 
-  // 🔘 Обработчик кнопки "Экспорт"
   if (exportBtn) {
     exportBtn.addEventListener("click", function () {
       const element = document.getElementById("analytics-results");
       const opt = {
-        margin:       0.5,
-        filename:     'analytics.pdf',
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2 },
-        jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+        margin: 0.5,
+        filename: "analytics.pdf",
+        image: { type: "jpeg", quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
       };
 
       html2pdf().set(opt).from(element).save();
@@ -85,6 +83,17 @@ function renderChart(ctx, content) {
         responsive: true,
         maintainAspectRatio: false,
         devicePixelRatio: window.devicePixelRatio || 1,
+        plugins: {
+          tooltip: {
+            callbacks: {
+              label: function (context) {
+                const index = context.dataIndex;
+                const valueLabel = content.value_labels?.[index];
+                return valueLabel || context.parsed.y;
+              }
+            }
+          }
+        }
       },
     }),
 
@@ -102,6 +111,17 @@ function renderChart(ctx, content) {
         responsive: true,
         maintainAspectRatio: false,
         devicePixelRatio: window.devicePixelRatio || 1,
+        plugins: {
+          tooltip: {
+            callbacks: {
+              label: function (context) {
+                const index = context.dataIndex;
+                const valueLabel = content.value_labels?.[index];
+                return valueLabel || context.parsed.y;
+              }
+            }
+          }
+        }
       },
     }),
 
@@ -178,7 +198,6 @@ function renderChart(ctx, content) {
   if (!configFn) return;
   if (["heatmap", "timeline"].includes(content.type)) return configFn();
 
-  // 🎯 Retina (HD) canvas setup
   const canvas = document.createElement("canvas");
   canvas.style.width = "100%";
   canvas.style.height = "100%";
