@@ -28,7 +28,8 @@ urlpatterns = [
     path("reports/", include("reports.urls",  namespace="reports")),
     path("references/", include("references.urls", namespace="references")),
     path("analytics/", include("analytics.urls", namespace="analytics")),
-    path("storage/", include("storage.urls", namespace="storage"))
+    path("storage/", include("storage.urls", namespace="storage")),
+    path("test/", include("test.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # TODO vyvesti media za root
