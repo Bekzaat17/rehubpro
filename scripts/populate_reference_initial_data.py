@@ -1,10 +1,50 @@
-from django.db import migrations
+import os
+from django.conf import settings
 from slugify import slugify
 
+from references.models import (
+    EmotionalState, PhysicalState, FamilyActivity,
+    MrpActivity, Motivation, DailyDynamics,
+    CharacterTrait, ResidentRole
+)
 
-def create_character_traits(apps, schema_editor):
-    CharacterTrait = apps.get_model("references", "CharacterTrait")
 
+def safe_slugify(name):
+    slug = slugify(name)
+    return slug if slug else f"slug-{abs(hash(name))}"
+
+
+def fill_if_missing(model, values):
+    for name in values:
+        slug = safe_slugify(name)
+        model.objects.update_or_create(
+            slug=slug,
+            defaults={"name": name}
+        )
+
+
+def create_emotional_data():
+    fill_if_missing(EmotionalState, [
+        'Ровное', 'Тревожное', 'Раздражительное', 'Подавленное'
+    ])
+    fill_if_missing(PhysicalState, [
+        'Хорошее', 'Удовлетворительное', 'Плохое'
+    ])
+    fill_if_missing(FamilyActivity, [
+        'Высокая активность', 'Средняя активность', 'Пассивность', 'Отстранённость'
+    ])
+    fill_if_missing(MrpActivity, [
+        'Активен', 'Умерен', 'Пассивен'
+    ])
+    fill_if_missing(Motivation, [
+        'Положительная', 'Нейтральная', 'Отрицательная', 'Вынужденная'
+    ])
+    fill_if_missing(DailyDynamics, [
+        'Положительная', 'Стабильная', 'Негативная'
+    ])
+
+
+def create_character_traits():
     traits = [
         ("безответственность", "defect"),
         ("безумие", "defect"),
@@ -109,24 +149,53 @@ def create_character_traits(apps, schema_editor):
     ]
 
     for name, type_ in traits:
-        CharacterTrait.objects.create(
-            name=name,
-            type=type_,
-            slug=slugify(f"{type_}-{name}")
+        slug = safe_slugify(f"{type_}-{name}")
+        CharacterTrait.objects.update_or_create(
+            slug=slug,
+            defaults={
+                "name": name,
+                "type": type_,
+            }
         )
 
 
-def delete_character_traits(apps, schema_editor):
-    CharacterTrait = apps.get_model("references", "CharacterTrait")
-    CharacterTrait.objects.all().delete()
-
-
-class Migration(migrations.Migration):
-
-    dependencies = [
-        ("references", "0003_load_initial_data"),
+def create_resident_roles():
+    roles = [
+        ("Президент", "president"),
+        ("НСО", "nso"),
+        ("ШК", "shk"),
+        ("ХД", "hd"),
+        ("Визор", "vizor"),
+        ("Учетовед", "uchetoved"),
+        ("Айболит", "aibolit"),
+        ("Чайханщик", "chaikhanshchik"),
+        ("Огородник", "ogorodnik"),
+        ("ШРР", "shrr"),
+        ("Фотокор", "fotokor"),
+        ("БПК", "bpk"),
+        ("Физорг", "fizorg"),
+        ("Дискомен", "diskomen"),
+        ("Библиотекарь", "bibliotekar"),
+        ("Массовик Затейник", "massovik-zateynik"),
+        ("Организаторы", "organizatory"),
+        ("ХР.ВР.", "hr-vr"),
+        ("Цветовод", "tsvetovod"),
+        ("Животновод", "zhivotnovod"),
     ]
+    for name, slug in roles:
+        ResidentRole.objects.update_or_create(
+            slug=slug,
+            defaults={"name": name}
+        )
 
-    operations = [
-        migrations.RunPython(create_character_traits, delete_character_traits),
-    ]
+
+def run():
+    print("🔄 Populating initial reference data (safe)...")
+    create_emotional_data()
+    create_character_traits()
+    create_resident_roles()
+    print("✅ Initial reference data population complete.")
+
+
+if __name__ == '__main__':
+    run()
