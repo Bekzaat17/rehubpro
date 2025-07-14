@@ -1,0 +1,49 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.so
+
+# Django stuff:
+*.sqlite3
+*.log
+*.pot
+*.pyc
+*.pyo
+
+# Env files
+.env
+*.env
+
+# Docker files
+volumes/
+*.pid
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+
+# Virtual environments
+env/
+venv/
+.venv/
+
+# Node (если используешь фронт)
+node_modules/
+build/
+dist/
+
+# Static & media (собираются отдельно)
+static/
+media/
+
+# Migrations (опционально — можно оставить вручную)
+**/migrations/*.pyc
+**/migrations/*.pyo
+**/migrations/__pycache__/
+
+# Можно игнорировать миграции вообще (если ты генерируешь их только при деплое):
+# **/migrations/*.py
