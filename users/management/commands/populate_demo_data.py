@@ -1,8 +1,8 @@
-# scripts/populate_reference_initial_data
-
-import os
+from django.core.management.base import BaseCommand
 from django.conf import settings
-from slugify import slugify
+from django.contrib.auth import get_user_model
+from dotenv import load_dotenv
+import os
 
 from references.models import (
     EmotionalState, PhysicalState, FamilyActivity,
@@ -10,44 +10,46 @@ from references.models import (
     CharacterTrait, ResidentRole
 )
 
-
-def safe_slugify(name):
-    slug = slugify(name)
-    return slug if slug else f"slug-{abs(hash(name))}"
+from slugify import slugify
 
 
-def fill_if_missing(model, values):
-    for name in values:
-        slug = safe_slugify(name)
-        model.objects.update_or_create(
-            slug=slug,
-            defaults={"name": name}
-        )
+class Command(BaseCommand):
+    help = "Populate initial reference and system data"
 
+    def safe_slugify(self, name):
+        slug = slugify(name)
+        return slug if slug else f"slug-{abs(hash(name))}"
 
-def create_emotional_data():
-    fill_if_missing(EmotionalState, [
-        'Ровное', 'Тревожное', 'Раздражительное', 'Подавленное'
-    ])
-    fill_if_missing(PhysicalState, [
-        'Хорошее', 'Удовлетворительное', 'Плохое'
-    ])
-    fill_if_missing(FamilyActivity, [
-        'Высокая активность', 'Средняя активность', 'Пассивность', 'Отстранённость'
-    ])
-    fill_if_missing(MrpActivity, [
-        'Активен', 'Умерен', 'Пассивен'
-    ])
-    fill_if_missing(Motivation, [
-        'Положительная', 'Нейтральная', 'Отрицательная', 'Вынужденная'
-    ])
-    fill_if_missing(DailyDynamics, [
-        'Положительная', 'Стабильная', 'Негативная'
-    ])
+    def fill_if_missing(self, model, values):
+        for name in values:
+            slug = self.safe_slugify(name)
+            model.objects.update_or_create(
+                slug=slug,
+                defaults={"name": name}
+            )
 
+    def create_emotional_data(self):
+        self.fill_if_missing(EmotionalState, [
+            'Ровное', 'Тревожное', 'Раздражительное', 'Подавленное'
+        ])
+        self.fill_if_missing(PhysicalState, [
+            'Хорошее', 'Удовлетворительное', 'Плохое'
+        ])
+        self.fill_if_missing(FamilyActivity, [
+            'Высокая активность', 'Средняя активность', 'Пассивность', 'Отстранённость'
+        ])
+        self.fill_if_missing(MrpActivity, [
+            'Активен', 'Умерен', 'Пассивен'
+        ])
+        self.fill_if_missing(Motivation, [
+            'Положительная', 'Нейтральная', 'Отрицательная', 'Вынужденная'
+        ])
+        self.fill_if_missing(DailyDynamics, [
+            'Положительная', 'Стабильная', 'Негативная'
+        ])
 
-def create_character_traits():
-    traits = [
+    def create_character_traits(self):
+        traits = traits = [
         ("безответственность", "defect"),
         ("безумие", "defect"),
         ("брезгливость", "defect"),
@@ -150,54 +152,67 @@ def create_character_traits():
         ("уравновешенность", "strength"),
     ]
 
-    for name, type_ in traits:
-        slug = safe_slugify(f"{type_}-{name}")
-        CharacterTrait.objects.update_or_create(
-            slug=slug,
-            defaults={
-                "name": name,
-                "type": type_,
-            }
-        )
+        for name, type_ in traits:
+            slug = self.safe_slugify(f"{type_}-{name}")
+            CharacterTrait.objects.update_or_create(
+                slug=slug,
+                defaults={"name": name, "type": type_}
+            )
 
+    def create_resident_roles(self):
+        roles = [
+            ("Президент", "president"),
+            ("НСО", "nso"),
+            ("ШК", "shk"),
+            ("ХД", "hd"),
+            ("Визор", "vizor"),
+            ("Учетовед", "uchetoved"),
+            ("Айболит", "aibolit"),
+            ("Чайханщик", "chaikhanshchik"),
+            ("Огородник", "ogorodnik"),
+            ("ШРР", "shrr"),
+            ("Фотокор", "fotokor"),
+            ("БПК", "bpk"),
+            ("Физорг", "fizorg"),
+            ("Дискомен", "diskomen"),
+            ("Библиотекарь", "bibliotekar"),
+            ("Массовик Затейник", "massovik-zateynik"),
+            ("Организаторы", "organizatory"),
+            ("ХР.ВР.", "hr-vr"),
+            ("Цветовод", "tsvetovod"),
+            ("Животновод", "zhivotnovod"),
+        ]
+        for name, slug in roles:
+            ResidentRole.objects.update_or_create(
+                slug=slug,
+                defaults={"name": name}
+            )
 
-def create_resident_roles():
-    roles = [
-        ("Президент", "president"),
-        ("НСО", "nso"),
-        ("ШК", "shk"),
-        ("ХД", "hd"),
-        ("Визор", "vizor"),
-        ("Учетовед", "uchetoved"),
-        ("Айболит", "aibolit"),
-        ("Чайханщик", "chaikhanshchik"),
-        ("Огородник", "ogorodnik"),
-        ("ШРР", "shrr"),
-        ("Фотокор", "fotokor"),
-        ("БПК", "bpk"),
-        ("Физорг", "fizorg"),
-        ("Дискомен", "diskomen"),
-        ("Библиотекарь", "bibliotekar"),
-        ("Массовик Затейник", "massovik-zateynik"),
-        ("Организаторы", "organizatory"),
-        ("ХР.ВР.", "hr-vr"),
-        ("Цветовод", "tsvetovod"),
-        ("Животновод", "zhivotnovod"),
-    ]
-    for name, slug in roles:
-        ResidentRole.objects.update_or_create(
-            slug=slug,
-            defaults={"name": name}
-        )
+    def create_superuser_if_missing(self):
+        User = get_user_model()
+        if not User.objects.filter(is_superuser=True).exists():
+            self.stdout.write("⚙️ Создание суперпользователя...")
 
+            username = os.getenv("SUPERUSER_USERNAME", "admin")
+            email = os.getenv("SUPERUSER_EMAIL", "admin@example.com")
+            password = os.getenv("SUPERUSER_PASSWORD", "admin")
 
-def run():
-    print("🔄 Populating initial reference data (safe)...")
-    create_emotional_data()
-    create_character_traits()
-    create_resident_roles()
-    print("✅ Initial reference data population complete.")
+            User.objects.create_superuser(
+                username=username,
+                email=email,
+                password=password
+            )
 
+            self.stdout.write(self.style.SUCCESS(f"✅ Суперпользователь {username} создан."))
+        else:
+            self.stdout.write("✅ Суперпользователь уже существует — пропускаем.")
 
-if __name__ == '__main__':
-    run()
+    def handle(self, *args, **kwargs):
+        self.stdout.write("🔄 Populating initial reference data...")
+
+        self.create_emotional_data()
+        self.create_character_traits()
+        self.create_resident_roles()
+        self.create_superuser_if_missing()
+
+        self.stdout.write(self.style.SUCCESS("✅ All reference data loaded successfully."))
