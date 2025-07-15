@@ -1,4 +1,5 @@
 # users/views/settings_view.py
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import update_session_auth_hash
 from django.views.generic import TemplateView
@@ -19,10 +20,13 @@ class UserSettingsView(LoginRequiredMixin, TemplateView):
         return context
 
     def post(self, request, *args, **kwargs):
-        profile_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user)
-        password_form = CustomPasswordChangeForm(user=request.user, data=request.POST)
+        # Флаг для понимания, какую форму обрабатываем
+        is_avatar_submit = 'avatar_submit' in request.POST
+        is_password_submit = 'password_submit' in request.POST
 
-        if 'avatar_submit' in request.POST:
+        if is_avatar_submit:
+            profile_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user)
+            password_form = CustomPasswordChangeForm(user=request.user)  # не обрабатываем
             if profile_form.is_valid():
                 profile_form.save()
                 messages.success(request, 'Аватар успешно обновлён.')
@@ -30,7 +34,9 @@ class UserSettingsView(LoginRequiredMixin, TemplateView):
             else:
                 messages.error(request, 'Ошибка при загрузке аватара.')
 
-        elif 'password_submit' in request.POST:
+        elif is_password_submit:
+            profile_form = ProfileUpdateForm(instance=request.user)  # не обрабатываем
+            password_form = CustomPasswordChangeForm(user=request.user, data=request.POST)
             if password_form.is_valid():
                 user = password_form.save()
                 update_session_auth_hash(request, user)
@@ -39,9 +45,11 @@ class UserSettingsView(LoginRequiredMixin, TemplateView):
             else:
                 messages.error(request, 'Ошибка при смене пароля.')
 
-        # Возвращаем шаблон с формами и ошибками
-        context = {
+        else:
+            profile_form = ProfileUpdateForm(instance=request.user)
+            password_form = CustomPasswordChangeForm(user=request.user)
+
+        return self.render_to_response({
             'profile_form': profile_form,
             'password_form': password_form,
-        }
-        return self.render_to_response(context)
+        })

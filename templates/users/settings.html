@@ -20,16 +20,31 @@
             <!-- Форма загрузки аватара -->
             <form method="post" enctype="multipart/form-data" class="mb-4 text-center">
                 {% csrf_token %}
-                <div class="mb-2 text-start">
-                    {{ avatar_form.avatar.label_tag }}
-                    {{ avatar_form.avatar }}
-                </div>
-                <button type="submit" name="avatar_submit" class="btn btn-primary-custom px-4">Загрузить аватар</button>
+                <input type="hidden" name="avatar_submit" value="1">
+                <input type="file" name="avatar" id="id_avatar" class="d-none" accept="image/*">
+
+                <label for="id_avatar" class="btn btn-secondary-custom px-4">
+                    Выбрать аватар
+                </label>
+
+                <script>
+                    document.addEventListener("DOMContentLoaded", function () {
+                        const input = document.getElementById("id_avatar");
+                        if (input) {
+                            input.addEventListener("change", function () {
+                                if (this.files.length > 0) {
+                                    this.form.submit();
+                                }
+                            });
+                        }
+                    });
+                </script>
             </form>
 
             <!-- Форма смены пароля -->
             <form method="post" class="text-center">
                 {% csrf_token %}
+                <input type="hidden" name="password_submit" value="1">
                 <h5 class="mb-3 text-start">Изменение пароля</h5>
 
                 {% for field in password_form %}
@@ -46,7 +61,9 @@
                     </div>
                 {% endfor %}
 
-                <button type="submit" name="password_submit" class="btn btn-primary-custom px-4">Сменить пароль</button>
+                <button type="submit" name="password_submit" class="btn btn-primary-custom px-4">
+                    Сменить пароль
+                </button>
             </form>
         </div>
     </div>
