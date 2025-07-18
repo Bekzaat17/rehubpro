@@ -116,8 +116,15 @@ LOGIN_REDIRECT_URL = reverse_lazy("users:dashboard")
 LOGOUT_REDIRECT_URL = reverse_lazy("users:login")
 
 # --- CORS / CSRF ---
-CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS", "").split(",")
-CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")
+def split_and_clean(env_var):
+    return [
+        origin.strip()
+        for origin in os.getenv(env_var, "").split(",")
+        if origin.strip().startswith("http://") or origin.strip().startswith("https://")
+    ]
+
+CORS_ALLOWED_ORIGINS = split_and_clean("CORS_ALLOWED_ORIGINS")
+CSRF_TRUSTED_ORIGINS = split_and_clean("CSRF_TRUSTED_ORIGINS")
 
 # --- Email (если используешь) ---
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"

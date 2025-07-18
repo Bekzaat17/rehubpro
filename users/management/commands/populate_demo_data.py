@@ -20,32 +20,47 @@ class Command(BaseCommand):
         slug = slugify(name)
         return slug if slug else f"slug-{abs(hash(name))}"
 
-    def fill_if_missing(self, model, values):
-        for name in values:
+    def fill_if_missing_with_score(self, model, values_with_scores):
+        for name, score in values_with_scores:
             slug = self.safe_slugify(name)
             model.objects.update_or_create(
                 slug=slug,
-                defaults={"name": name}
+                defaults={"name": name, "score": score}
             )
 
     def create_emotional_data(self):
-        self.fill_if_missing(EmotionalState, [
-            'Ровное', 'Тревожное', 'Раздражительное', 'Подавленное'
+        self.fill_if_missing_with_score(EmotionalState, [
+            ('Ровное', 80),
+            ('Тревожное', 40),
+            ('Раздражительное', 30),
+            ('Подавленное', 20)
         ])
-        self.fill_if_missing(PhysicalState, [
-            'Хорошее', 'Удовлетворительное', 'Плохое'
+        self.fill_if_missing_with_score(PhysicalState, [
+            ('Хорошее', 90),
+            ('Удовлетворительное', 60),
+            ('Плохое', 30)
         ])
-        self.fill_if_missing(FamilyActivity, [
-            'Высокая активность', 'Средняя активность', 'Пассивность', 'Отстранённость'
+        self.fill_if_missing_with_score(FamilyActivity, [
+            ('Высокая активность', 90),
+            ('Средняя активность', 60),
+            ('Пассивность', 30),
+            ('Отстранённость', 10)
         ])
-        self.fill_if_missing(MrpActivity, [
-            'Активен', 'Умерен', 'Пассивен'
+        self.fill_if_missing_with_score(MrpActivity, [
+            ('Активен', 90),
+            ('Умерен', 60),
+            ('Пассивен', 30)
         ])
-        self.fill_if_missing(Motivation, [
-            'Положительная', 'Нейтральная', 'Отрицательная', 'Вынужденная'
+        self.fill_if_missing_with_score(Motivation, [
+            ('Положительная', 90),
+            ('Нейтральная', 50),
+            ('Отрицательная', 20),
+            ('Вынужденная', 10)
         ])
-        self.fill_if_missing(DailyDynamics, [
-            'Положительная', 'Стабильная', 'Негативная'
+        self.fill_if_missing_with_score(DailyDynamics, [
+            ('Положительная', 90),
+            ('Стабильная', 60),
+            ('Негативная', 30)
         ])
 
     def create_character_traits(self):

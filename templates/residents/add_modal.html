@@ -10,30 +10,50 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
         </div>
         <div class="modal-body">
-            {% if form %}
-              <div class="mb-3">
-                <label for="{{ form.full_name.id_for_label }}" class="form-label">ФИО</label>
-                {{ form.full_name|add_class:"form-control" }}
+          {% if form %}
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                <label for="{{ form.last_name.id_for_label }}" class="form-label">Фамилия</label>
+                {{ form.last_name|add_class:"form-control" }}
               </div>
-              <div class="mb-3">
+              <div class="col-md-4 mb-3">
+                <label for="{{ form.first_name.id_for_label }}" class="form-label">Имя</label>
+                {{ form.first_name|add_class:"form-control" }}
+              </div>
+              <div class="col-md-4 mb-3">
+                <label for="{{ form.middle_name.id_for_label }}" class="form-label">Отчество</label>
+                {{ form.middle_name|add_class:"form-control" }}
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="{{ form.identical_number.id_for_label }}" class="form-label">Идентификационный номер</label>
+              {{ form.identical_number|add_class:"form-control" }}
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
                 <label for="{{ form.date_of_birth.id_for_label }}" class="form-label">Дата рождения</label>
                 {{ form.date_of_birth|add_class:"form-control" }}
               </div>
-              <div class="mb-3">
+              <div class="col-md-6 mb-3">
                 <label for="{{ form.date_of_admission.id_for_label }}" class="form-label">Дата поступления</label>
                 {{ form.date_of_admission|add_class:"form-control" }}
               </div>
-              <div class="mb-3">
-                <label for="{{ form.dependency_type.id_for_label }}" class="form-label">Тип зависимости</label>
-                {{ form.dependency_type|add_class:"form-select" }}
-              </div>
-              <div class="mb-3">
-                <label for="{{ form.notes.id_for_label }}" class="form-label">Заметки</label>
-                {{ form.notes|add_class:"form-control" }}
-              </div>
-            {% else %}
-              <p class="text-danger">Форма не передана в шаблон</p>
-            {% endif %}
+            </div>
+
+            <div class="mb-3">
+              <label for="{{ form.dependency_type.id_for_label }}" class="form-label">Тип зависимости</label>
+              {{ form.dependency_type|add_class:"form-select" }}
+            </div>
+
+            <div class="mb-3">
+              <label for="{{ form.notes.id_for_label }}" class="form-label">Заметки</label>
+              {{ form.notes|add_class:"form-control" }}
+            </div>
+          {% else %}
+            <p class="text-danger">Форма не передана в шаблон</p>
+          {% endif %}
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>

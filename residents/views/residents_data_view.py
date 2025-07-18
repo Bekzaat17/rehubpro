@@ -15,7 +15,6 @@ class ResidentsDataView(LoginRequiredMixin, View):
     def get(self, request):
         residents = Resident.objects.all()
 
-        # Названия колонок (можно потом расширить — динамически)
         column_names = [
             "ФИО",
             "Дата рождения",
@@ -25,13 +24,14 @@ class ResidentsDataView(LoginRequiredMixin, View):
         ]
 
         data = []
-        for resident in residents:
+        for r in residents:
+            full_name = f"{r.last_name} {r.first_name} {r.middle_name or ''}".strip()
             data.append([
-                resident.full_name,
-                format_date(resident.date_of_birth),
-                format_date(resident.date_of_admission),
-                resident.get_dependency_type_display() if resident.dependency_type else "—",
-                resident.notes or "—"
+                full_name,
+                format_date(r.date_of_birth),
+                format_date(r.date_of_admission),
+                r.get_dependency_type_display() if r.dependency_type else "—",
+                r.notes or "—"
             ])
 
         return JsonResponse({
