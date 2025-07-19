@@ -5,7 +5,7 @@ ENV PYTHONUNBUFFERED 1
 
 WORKDIR /app
 
-# Установка системных зависимостей для WeasyPrint и общих пакетов
+# Установка системных зависимостей для WeasyPrint и прочего
 RUN apt-get update && apt-get install -y \
     build-essential \
     libpango-1.0-0 \
@@ -24,15 +24,16 @@ RUN apt-get update && apt-get install -y \
     curl \
  && rm -rf /var/lib/apt/lists/*
 
-# Установка Python-зависимостей
+# Установка зависимостей Python
 COPY requirements.txt .
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-# Копируем весь проект
+# Копируем всё приложение
 COPY . .
 
-# Права на скрипт запуска
+# Делаем entrypoint исполняемым
 RUN chmod +x docker/entrypoint.sh
 
-ENTRYPOINT ["docker/entrypoint.sh"]
+# Указываем shell для запуска скрипта
+ENTRYPOINT ["sh", "docker/entrypoint.sh"]

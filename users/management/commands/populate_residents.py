@@ -1,4 +1,4 @@
-# residents/management/commands/populate_demo_residents.py
+# users/management/commands/populate_demo_residents.py
 
 from django.core.management.base import BaseCommand
 from residents.models import Resident

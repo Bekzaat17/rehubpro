@@ -30,7 +30,6 @@ class ResidentRoleAssignment(models.Model):
     )
 
     assigned_at = models.DateField(
-        auto_now_add=True,
         verbose_name="Дата назначения"
     )
 
