@@ -21,7 +21,7 @@ class AssignedTask(models.Model):
     resident = models.ForeignKey(Resident, on_delete=models.CASCADE, related_name="assigned_tasks")
     assigned_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="assigned_tasks")
 
-    assigned_at = models.DateTimeField(auto_now_add=True)
+    assigned_at = models.DateTimeField()
 
     writing_started = models.DateField(null=True, blank=True, help_text="Дата начала написания задания")
     writing_finished = models.DateField(null=True, blank=True, help_text="Дата завершения написания")

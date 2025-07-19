@@ -12,6 +12,7 @@ from references.models import (
     CharacterTrait, FamilyActivity, MrpActivity
 )
 from roles.models.resident_role_assignment import ResidentRoleAssignment
+from tasks.models.task_progress import TaskProgress
 from tasks.models.assigned_task import AssignedTask
 from reports.services.report_factory import ReportFactory
 
@@ -71,7 +72,7 @@ class Command(BaseCommand):
                 role_statuses = self.get_role_statuses(resident, current_date)
 
                 try:
-                    factory = ReportFactory(resident, created_by, date=current_date)
+                    factory = ReportFactory(resident, created_by, date=current_date, skip_validation=True)
                     factory.create_or_update_report(data, task_comments, role_statuses)
                     self.stdout.write(self.style.SUCCESS(
                         f"✔️  Отчёт создан: {resident} → {current_date}"
@@ -86,17 +87,23 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS("✅ Все отчёты успешно созданы."))
 
     def get_task_comments(self, resident, date):
-        comments = {}
-        active_tasks = AssignedTask.objects.filter(
-            resident=resident,
-            writing_started__lte=date,
-            completed_at__isnull=True
-        ).filter(
-            status__in=[AssignedTask.Status.WRITING, AssignedTask.Status.SUBMITTING]
+        latest_progress = (
+            TaskProgress.objects
+            .filter(assigned_task__resident=resident, created_at__date__lte=date)
+            .order_by("-created_at")
+            .first()
         )
-        for task in active_tasks:
-            comments[task.id] = f"Комментарий по задаче: {task.task.title}"
-        return comments
+
+        if not latest_progress:
+            return {}
+
+        comment = latest_progress.comment or ""
+        if not comment:
+            return {}
+
+        return {
+            latest_progress.assigned_task.task.id: comment
+        }
 
     def get_role_statuses(self, resident, date):
         statuses = {}

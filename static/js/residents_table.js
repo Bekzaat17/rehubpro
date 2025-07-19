@@ -12,33 +12,58 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
-            // Рендерим заголовки
+            // Очищаем старые данные
             headerRow.innerHTML = "";
+            body.innerHTML = "";
 
-            // Добавляем первый столбец для нумерации
+            // Добавляем колонку нумерации
             const numberTh = document.createElement("th");
             numberTh.textContent = "№";
             headerRow.appendChild(numberTh);
 
-            data.columns.forEach(col => {
+            // Рендер заголовков
+            data.columns.forEach((col) => {
                 const th = document.createElement("th");
                 th.textContent = col;
                 headerRow.appendChild(th);
             });
 
-            // Рендерим строки
-            body.innerHTML = "";
+            // Рендер строк таблицы
             data.rows.forEach((row, index) => {
                 const tr = document.createElement("tr");
 
-                // Добавляем ячейку с номером строки
+                // Номер строки
                 const numberTd = document.createElement("td");
                 numberTd.textContent = index + 1;
                 tr.appendChild(numberTd);
 
-                row.forEach(cell => {
+                row.forEach((cell, cellIndex) => {
                     const td = document.createElement("td");
-                    td.textContent = cell;
+
+                    // Используем innerHTML для отображения HTML-тегов
+                    td.innerHTML = cell;
+
+                    // Добавляем стили для определённых колонок
+                    switch (cellIndex) {
+                        case 2:
+                            td.classList.add("col-colored-2"); // Текущее задание
+                            break;
+                        case 3:
+                            td.classList.add("col-colored-3"); // Последний прогресс
+                            break;
+                        case 4:
+                            td.classList.add("col-colored-4"); // Активные роли
+                            break;
+                        case 5:
+                            td.classList.add("col-colored-5"); // Заметки
+                            break;
+                        case 6:
+                            td.classList.add("col-colored-6"); // Тип зависимости
+                            break;
+                        default:
+                            break;
+                    }
+
                     tr.appendChild(td);
                 });
 

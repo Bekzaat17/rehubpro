@@ -1,3 +1,4 @@
+import os
 from django.utils.timezone import localdate
 from django.core.exceptions import ValidationError
 from tasks.models.assigned_task import AssignedTask
@@ -13,11 +14,12 @@ class ReportValidator:
     - После создания: проверка обязательных полей и характеристик
     """
 
-    def __init__(self, resident, date=None):
+    def __init__(self, resident, date=None, skip_validation=False):
         self.resident = resident
         self.date = date or localdate()
         self.task_comments = {}
         self.role_statuses = {}
+        self.skip_validation = skip_validation
 
     def set_task_comments(self, task_comments: dict):
         self.task_comments = task_comments
@@ -26,22 +28,14 @@ class ReportValidator:
         self.role_statuses = role_statuses
 
     def validate_pre_creation(self):
-        """
-        Проверка до создания отчёта:
-        - Активные задания должны иметь комментарии
-        - Активные роли должны иметь статус
-        """
-        # TODO: task comments validate by todays date, do not validate role statuses
+        if self.skip_validation:
+            return
         self._validate_task_comments()
         self._validate_role_statuses()
 
     def validate_post_creation(self, report: ResidentReport):
-        """
-        Проверка после создания отчёта:
-        - Обязательные поля (эмоции, физика, мотивация и т.д.)
-        - Характеристики
-        - Проверка заполнения блока УСТС
-        """
+        if self.skip_validation:
+            return
         self._validate_required_fields(report)
         self._validate_traits(report)
         self._validate_usts(report)
@@ -106,17 +100,8 @@ class ReportValidator:
             raise ValidationError("Не выбраны характеристики (достоинства или дефекты)")
 
     def _validate_usts(self, report: ResidentReport):
-        """
-        Проверка заполнения блока УСТС:
-        - Должно быть указано, обозначил ли УСТС (ровно/не ровно)
-        - Должно быть указано, имеет ли формат
-        """
         if report.usts_info_shared is None:
             raise ValidationError("Не указано: Информацию подает (ровно / не ровно)")
 
         if report.usts_format_followed is None:
             raise ValidationError("Не указано: Имеет ли формат УСТС")
-        # (опционально) требовать комментарий, если хоть одно "нет"
-        # if not report.usts_info_shared or not report.usts_format_followed:
-        #     if not report.usts_comment or report.usts_comment.strip() == "":
-        #         raise ValidationError("При нарушении УТС необходимо указать комментарий")

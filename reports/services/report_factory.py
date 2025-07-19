@@ -15,10 +15,11 @@ class ReportFactory:
     Фабрика для создания или обновления полного отчёта по резиденту.
     """
 
-    def __init__(self, resident, created_by, date=None):
+    def __init__(self, resident, created_by, date=None, skip_validation=False):
         self.resident = resident
         self.created_by = created_by
         self.date = date or localdate()
+        self.skip_validation = skip_validation
 
     @transaction.atomic
     def create_or_update_report(self, data, task_comments, role_statuses):
@@ -32,7 +33,7 @@ class ReportFactory:
         """
 
         # 1. Валидируем ДО создания/обновления ResidentReport
-        validator = ReportValidator(self.resident, self.date)
+        validator = ReportValidator(self.resident, self.date, skip_validation=self.skip_validation)
         validator.set_task_comments(task_comments)
         validator.set_role_statuses(role_statuses)
         validator.validate_pre_creation()

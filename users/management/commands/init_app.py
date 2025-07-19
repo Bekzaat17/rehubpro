@@ -9,6 +9,7 @@ class Command(BaseCommand):
 
     ordered_commands = [
         ("populate_demo_data", "🧪 Loading initial structure..."),
+        ("create_consultant", "👥 Creating demo stuff..."),              # for test systems
         ("populate_residents", "👥 Creating demo residents..."),         #for test systems
         ("populate_task_templates", "🗂 Creating task templates..."),    #for test systems
         ("populate_demo_assignments", "📝 Assigning tasks..."),          #for test systems
