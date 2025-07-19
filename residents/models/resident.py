@@ -1,6 +1,7 @@
 from django.db import models
 from datetime import date
 from ..enums import DependencyType
+from ..managers import ActiveResidentManager
 
 
 class Resident(models.Model):
@@ -15,6 +16,11 @@ class Resident(models.Model):
 
     date_of_birth = models.DateField(verbose_name="Дата рождения")
     date_of_admission = models.DateField(verbose_name="Дата поступления")
+
+    # Менеджеры
+    objects = models.Manager()  # обычный — для админки и прямого доступа
+    active = ActiveResidentManager()
+
 
     dependency_type = models.CharField(
         max_length=10,
@@ -38,6 +44,7 @@ class Resident(models.Model):
         verbose_name = "Резидент"
         verbose_name_plural = "Резиденты"
         ordering = ["last_name", "first_name"]
+        default_manager_name = "active"
 
     def __str__(self):
         return self.full_name

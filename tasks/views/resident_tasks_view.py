@@ -13,7 +13,7 @@ class ResidentTasksView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
 
         # Загружаем всех резидентов с их последним назначенным заданием
-        residents = Resident.objects.all()
+        residents = Resident.active.all()
 
         resident_data = []
         for resident in residents:

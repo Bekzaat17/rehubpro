@@ -11,7 +11,7 @@ class AssignRolesView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
 
         # Загружаем всех резидентов с их назначениями и ролями
-        residents = Resident.objects.all().prefetch_related("role_assignments__role")
+        residents = Resident.active.all().prefetch_related("role_assignments__role")
 
         # Добавляем каждому резиденту поле `active_roles`
         for resident in residents:

@@ -48,7 +48,7 @@ def analytics_main_view(request):
     return JsonResponse(result)
 
 def analytics_full_page_view(request):
-    residents = Resident.objects.all()
+    residents = Resident.active.all()
     return render(request, "analytics/full_page.html", {
         "residents": residents
     })

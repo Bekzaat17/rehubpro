@@ -1,5 +1,3 @@
-# residents/views/residents_data_view.py
-
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from django.views import View
@@ -31,7 +29,7 @@ class ResidentsDataView(LoginRequiredMixin, View):
             "Тип зависимости"
         ]
 
-        data = []
+        rows = []
         today = now().date()
 
         for r in residents:
@@ -89,17 +87,21 @@ class ResidentsDataView(LoginRequiredMixin, View):
             # Тип зависимости
             dep_type = r.get_dependency_type_display() if r.dependency_type else "—"
 
-            data.append([
-                full_name,
-                format_date(r.date_of_admission),
-                task_display,
-                progress_display,
-                roles_display,
-                notes,
-                dep_type
-            ])
+            # Добавляем ID + данные
+            rows.append({
+                "id": r.id,
+                "cells": [
+                    full_name,
+                    format_date(r.date_of_admission),
+                    task_display,
+                    progress_display,
+                    roles_display,
+                    notes,
+                    dep_type
+                ]
+            })
 
         return JsonResponse({
             "columns": column_names,
-            "rows": data
+            "rows": rows
         })

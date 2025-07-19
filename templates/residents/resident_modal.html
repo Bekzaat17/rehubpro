@@ -1,0 +1,85 @@
+<!-- Модальное окно личного дела -->
+<div class="modal fade" id="residentModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content">
+
+      <!-- Заголовок -->
+      <div class="modal-header">
+        <h5 class="modal-title" id="residentModalLabel">Личное дело</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+      </div>
+
+      <!-- Вкладки -->
+      <div class="modal-body">
+
+        <!-- Навигация -->
+        <ul class="nav nav-tabs" id="residentTabNav" role="tablist">
+          <li class="nav-item">
+            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-general" type="button" role="tab">
+              Общее
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-tasks" type="button" role="tab">
+              Задания
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-roles" type="button" role="tab">
+              Роли
+            </button>
+          </li>
+        </ul>
+
+        <!-- Контент вкладок -->
+        <div class="tab-content pt-3">
+
+          <!-- Вкладка 1: Общее -->
+          <div class="tab-pane fade show active" id="tab-general" role="tabpanel">
+            <form id="residentGeneralForm">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label">ФИО</label>
+                  <input type="text" class="form-control" id="residentName" disabled>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Дата рождения</label>
+                  <input type="date" class="form-control" id="residentBirthdate" disabled>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Тип зависимости</label>
+                  <select class="form-select" id="residentDependency">
+                    <option value="">Выберите тип...</option>
+                    <!-- динамически добавим -->
+                  </select>
+                </div>
+                <div class="col-12">
+                  <label class="form-label">Заметки</label>
+                  <textarea class="form-control" id="residentNotes" rows="4" placeholder="Введите заметки..."></textarea>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <!-- Вкладка 2: Задания -->
+          <div class="tab-pane fade" id="tab-tasks" role="tabpanel">
+            <div id="residentTasksContent">Задания загружаются...</div>
+          </div>
+
+          <!-- Вкладка 3: Роли -->
+          <div class="tab-pane fade" id="tab-roles" role="tabpanel">
+            <div id="residentRolesContent">Роли загружаются...</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Нижняя панель -->
+      <div class="modal-footer justify-content-between bg-light sticky-bottom">
+        <button class="btn btn-primary" id="saveResidentBtn">💾 Сохранить изменения</button>
+        <button class="btn btn-danger" id="dischargeResidentBtn">🛑 Завершить лечение</button>
+      </div>
+
+    </div>
+  </div>
+</div>

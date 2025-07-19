@@ -11,6 +11,8 @@ cssselect2==0.8.0
 daphne==4.2.1
 Django==5.2.3
 django-cors-headers==4.7.0
+django-filter==25.1
+djangorestframework==3.16.0
 fonttools==4.58.4
 gunicorn==23.0.0
 hyperlink==21.0.0

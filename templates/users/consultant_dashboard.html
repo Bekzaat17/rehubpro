@@ -46,8 +46,10 @@
 </div>
 
 {% include "residents/add_modal.html" %}
+{% include "residents/resident_modal.html" %}
 {% endblock %}
 
 {% block extra_js %}
-  <script src="{% static 'js/residents/residents_table.js' %}"></script>
+    <script src="{% static 'js/residents/residents_table.js' %}"></script>
+    <script src="{% static 'js/residents/resident_modal.js' %}"></script>
 {% endblock %}
