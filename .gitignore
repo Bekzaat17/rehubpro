@@ -36,9 +36,12 @@ node_modules/
 build/
 dist/
 
-# Static & media (собираются отдельно)
-static/
+# Static & media (исключаем только собранные файлы, а не исходные)
+staticfiles/
 media/
+# Но включаем исходную статику
+!static/js/
+!static/css/
 
 # Migrations (опционально — можно оставить вручную)
 **/migrations/*.pyc
