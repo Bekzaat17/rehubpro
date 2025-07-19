@@ -2,8 +2,6 @@ document.addEventListener("DOMContentLoaded", function () {
     fetch("/residents/data/")
         .then(response => response.json())
         .then(data => {
-            console.log("Полученные данные:", data);
-
             const headerRow = document.getElementById("residents-header");
             const body = document.getElementById("residents-body");
 
