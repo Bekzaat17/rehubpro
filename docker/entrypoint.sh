@@ -27,5 +27,9 @@ python manage.py init_app # Добавь --force при необходимост
 # =============================
 # Используем exec, чтобы заменить текущий процесс скрипта на gunicorn
 # Это важно для правильной обработки сигналов (например, в Docker)
-echo "🔥 Starting Gunicorn..."
-exec gunicorn config.wsgi:application --bind 0.0.0.0:8000
+# echo "🔥 Starting Gunicorn..."
+# exec gunicorn config.wsgi:application --bind 0.0.0.0:8000
+
+
+echo "🔥 Starting Daphne..."
+exec daphne -b 0.0.0.0 -p 8000 config.asgi:application

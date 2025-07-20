@@ -30,6 +30,7 @@ urlpatterns = [
     path("analytics/", include("analytics.urls", namespace="analytics")),
     path("storage/", include("storage.urls", namespace="storage")),
     path("test/", include("test.urls")),
+    path("notifications/", include("notifications.urls", namespace="notifications")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # TODO vyvesti media za root

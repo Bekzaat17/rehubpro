@@ -1,19 +1,51 @@
 {% extends "base.html" %}
+
 {% block content %}
-<div class="container mt-5">
-  <h2>🧪 Панель разработчика</h2>
+    <h1>🔧 Dev Panel</h1>
 
-  {% if error %}
-    <div class="alert alert-danger">{{ error }}</div>
-  {% endif %}
-  {% if result %}
-    <div class="alert alert-success">{{ result }}</div>
-  {% endif %}
+    <form id="notification-form">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="send_notification">
+        <button type="submit" class="btn btn-primary">Отправить тестовое уведомление</button>
+    </form>
 
-  <form method="post">
-    {% csrf_token %}
-    <input type="hidden" name="action" value="test">
-    <button class="btn btn-primary mt-3">Выполнить тест</button>
-  </form>
-</div>
+    <div id="notification-result" class="mt-3"></div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const form = document.getElementById('notification-form');
+        const result = document.getElementById('notification-result');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const csrfToken = form.querySelector('[name=csrfmiddlewaretoken]').value;
+            const formData = new FormData(form);
+
+            const response = await fetch("", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": csrfToken
+                },
+                body: formData
+            });
+
+            const html = await response.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, "text/html");
+
+            const success = doc.querySelector(".alert-success");
+            const error = doc.querySelector(".alert-danger");
+
+            result.innerHTML = "";
+            if (success) {
+                result.innerHTML = success.outerHTML;
+            } else if (error) {
+                result.innerHTML = error.outerHTML;
+            }
+        });
+    });
+</script>
 {% endblock %}

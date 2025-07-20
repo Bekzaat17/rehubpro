@@ -60,7 +60,17 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "config.wsgi.application"
-ASGI_APPLICATION = "config.asgi.application"  # <--- Важно для Daphne
+ASGI_APPLICATION = "config.routing.application"  # <--- Важно для Daphne
+
+# --- Redis + Channels ---
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": os.getenv("CHANNEL_LAYERS_BACKEND", "channels_redis.core.RedisChannelLayer"),
+        "CONFIG": {
+            "hosts": [(os.getenv("CHANNEL_LAYERS_HOST", "redis"), int(os.getenv("CHANNEL_LAYERS_PORT", 6379)))],
+        },
+    },
+}
 
 # --- База данных ---
 DATABASES = {
@@ -72,16 +82,6 @@ DATABASES = {
         "HOST": os.getenv("POSTGRES_HOST", "db"),
         "PORT": os.getenv("POSTGRES_PORT", "5432"),
     }
-}
-
-# --- Redis + Channels ---
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": os.getenv("CHANNEL_LAYERS_BACKEND", "channels_redis.core.RedisChannelLayer"),
-        "CONFIG": {
-            "hosts": [(os.getenv("CHANNEL_LAYERS_HOST", "redis"), int(os.getenv("CHANNEL_LAYERS_PORT", 6379)))],
-        },
-    },
 }
 
 # --- Пароли ---

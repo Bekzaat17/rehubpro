@@ -1,7 +1,91 @@
 {% load static %}
+<style>
+    :root {
+        --primary-color: #2ECC71;
+        --secondary-color: #007BFF;
+    }
+
+    #notification-bell {
+        position: relative;
+        cursor: pointer;
+        margin-right: 20px;
+        font-size: 20px;
+        color: var(--secondary-color);
+    }
+
+    #notification-count {
+        position: absolute;
+        top: -5px;
+        right: -10px;
+        background: red;
+        color: white;
+        border-radius: 50%;
+        padding: 2px 6px;
+        font-size: 12px;
+        display: none;
+        z-index: 1;
+    }
+
+    .dropdown-menu.notification-menu {
+        min-width: 300px;
+        max-height: 400px;
+        overflow-y: auto;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .notification-item {
+        background-color: #fff;
+        border-radius: 8px;
+        padding: 0.75rem;
+        margin-bottom: 0.5rem;
+        animation: fadeIn 0.3s ease-in-out;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.05); /* вместо полосы */
+    }
+
+    .notification-item h6 {
+        margin: 0;
+        font-weight: bold;
+        color: var(--primary-color);
+    }
+
+    .notification-item p {
+        margin: 0.5rem 0;
+        font-size: 0.875rem;
+    }
+
+    .notification-item button {
+        align-self: flex-end;
+        font-size: 0.75rem;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
 <nav class="navbar navbar-light bg-light justify-content-end px-4 shadow-sm">
+    <div class="dropdown me-3">
+        <div id="notification-bell"
+             class="position-relative"
+             data-bs-toggle="dropdown"
+             aria-expanded="false">
+            <i class="fas fa-bell fa-lg"></i>
+            <span id="notification-count"
+                  class="position-absolute badge rounded-pill bg-danger">
+              0
+            </span>
+        </div>
+
+        <ul class="dropdown-menu dropdown-menu-end notification-menu p-2" id="notification-list">
+            <li class="text-muted small text-center">Нет новых уведомлений</li>
+        </ul>
+    </div>
+
     <div class="dropdown">
-        <a class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+        <a class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center"
+           href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
             <img src="{% if request.user.avatar %}{{ request.user.avatar.url }}{% else %}{% static 'img/default_avatar.png' %}{% endif %}"
                  alt="Avatar"
                  class="rounded-circle me-2"
