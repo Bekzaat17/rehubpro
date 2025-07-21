@@ -1,65 +1,65 @@
 {% extends 'base.html' %}
 {% load static %}
+
 {% block title %}Напоминания{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2 class="mb-4">🕒 Напоминания</h2>
+<div class="container mt-5 position-relative">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>🕒 Напоминания</h2>
+        <button id="createReminderBtn" class="btn btn-primary-custom">➕ Создать</button>
+    </div>
 
-    <form method="post" action="{% url 'reminders:create_reminder' %}" class="card p-4 mb-4 shadow-sm">
-        {% csrf_token %}
-        <div class="row">
-            <div class="col-md-6 mb-3">
-                {{ form.title.label_tag }} {{ form.title }}
-            </div>
-            <div class="col-md-6 mb-3">
-                {{ form.datetime.label_tag }} {{ form.datetime }}
-            </div>
-            <div class="col-md-12 mb-3">
-                {{ form.text.label_tag }} {{ form.text }}
-            </div>
-            <div class="col-md-6 mb-3">
-                {{ form.repeat.label_tag }} {{ form.repeat }}
-            </div>
-            <div class="col-md-6 mb-3 d-flex align-items-end">
-                <button type="submit" class="btn btn-primary w-100">Создать</button>
-            </div>
-        </div>
-    </form>
-
-    <h4>Ваши напоминания:</h4>
-    <table class="table table-bordered table-striped mt-3">
-        <thead class="table-light">
-            <tr>
-                <th>📌 Заголовок</th>
-                <th>📝 Описание</th>
-                <th>⏰ Дата/время</th>
-                <th>🔁 Повтор</th>
-                <th>✅ Активно?</th>
-                <th>🗑</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for r in reminders %}
-                <tr>
-                    <td>{{ r.title }}</td>
-                    <td>{{ r.text }}</td>
-                    <td>{{ r.datetime|date:"d.m.Y H:i" }}</td>
-                    <td>{{ r.get_repeat_display }}</td>
-                    <td>{{ r.is_active|yesno:"Да,Нет" }}</td>
-                    <td>
-                        <form method="post" action="{% url 'reminders:delete_reminder' r.pk %}" style="display:inline;">
-                            {% csrf_token %}
-                            <button class="btn btn-danger btn-sm" onclick="return confirm('Удалить напоминание?')">Удалить</button>
-                        </form>
-                    </td>
-                </tr>
-            {% empty %}
-                <tr>
-                    <td colspan="6">Нет активных напоминаний.</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div id="remindersTableWrapper">
+        {% include "reminders/_reminder_table.html" %}
+    </div>
 </div>
+
+<!-- Модалка -->
+<div class="modal fade" id="reminderModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <form id="reminderForm">
+        <div class="modal-header">
+          <h5 class="modal-title" id="reminderModalTitle">Новое напоминание</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+        </div>
+        <div class="modal-body">
+          {% csrf_token %}
+          <input type="hidden" name="reminder_id" id="reminderIdInput">
+          <div class="mb-3">
+              <label for="titleInput">Заголовок</label>
+              <input type="text" class="form-control" name="title" id="titleInput" required>
+          </div>
+          <div class="mb-3">
+              <label for="textInput">Описание</label>
+              <textarea class="form-control" name="text" id="textInput"></textarea>
+          </div>
+          <div class="mb-3">
+              <label for="datetimeInput">Когда напомнить</label>
+              <input type="datetime-local" class="form-control" name="datetime" id="datetimeInput" required>
+          </div>
+          <div class="mb-3">
+              <label for="repeatSelect">Повтор</label>
+              <select class="form-control" name="repeat" id="repeatSelect">
+                  {% for key, label in form.repeat.field.choices %}
+                      <option value="{{ key }}">{{ label }}</option>
+                  {% endfor %}
+              </select>
+          </div>
+          <div class="form-check mb-3">
+              <input class="form-check-input" type="checkbox" name="is_active" id="isActiveInput" checked>
+              <label class="form-check-label" for="isActiveInput">Активно</label>
+          </div>
+        </div>
+        <div class="modal-footer justify-content-between">
+          <button type="button" class="btn btn-outline-danger me-auto d-none" id="deleteReminderBtn">Удалить</button>
+          <button type="submit" class="btn btn-primary">Сохранить</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="{% static 'js/reminders/reminders.js' %}"></script>
 {% endblock %}
