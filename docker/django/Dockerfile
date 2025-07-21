@@ -1,14 +1,15 @@
 FROM python:3.11-slim
 
 # --- Основные переменные окружения ---
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-ENV TZ=Asia/Almaty
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    TZ=Asia/Almaty \
+    DEBIAN_FRONTEND=noninteractive
 
 WORKDIR /app
 
-# --- Установка системных зависимостей + tzdata ---
-RUN apt-get update && apt-get install -y \
+# --- Установка зависимостей системы ---
+RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     libpango-1.0-0 \
     libgdk-pixbuf2.0-0 \
@@ -26,21 +27,20 @@ RUN apt-get update && apt-get install -y \
     curl \
     tzdata \
     netcat-openbsd \
- && cp /usr/share/zoneinfo/$TZ /etc/localtime \
- && echo $TZ > /etc/timezone \
+ && ln -sf /usr/share/zoneinfo/$TZ /etc/localtime \
+ && echo "$TZ" > /etc/timezone \
  && rm -rf /var/lib/apt/lists/*
 
-# --- Установка Python-зависимостей ---
+# --- Копируем зависимости и устанавливаем Python-пакеты ---
 COPY requirements.txt .
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir --upgrade pip \
+ && pip install --no-cache-dir -r requirements.txt
 
-# --- Копируем код проекта ---
+# --- Копируем проект ---
 COPY . .
 
-# --- Делаем скрипты исполняемыми ---
-RUN chmod +x docker/entrypoint.sh
-RUN chmod +x docker/wait_for_migrations.sh
+# --- Скрипты ---
+RUN chmod +x docker/entrypoint.sh docker/wait_for_migrations.sh
 
-# --- Указываем shell для запуска entrypoint ---
+# --- Старт ---
 ENTRYPOINT ["sh", "docker/entrypoint.sh"]
