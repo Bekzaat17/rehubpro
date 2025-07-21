@@ -29,9 +29,10 @@ document.addEventListener("DOMContentLoaded", () => {
         return cookieValue;
     }
 
-    function createNotificationElement(data) {
+    function createNotificationElement(data, autoDismiss = false) {
         const li = document.createElement('li');
         li.className = "notification-item d-flex flex-column";
+        li.dataset.id = data.id;
 
         const title = document.createElement('h6');
         title.textContent = data.title;
@@ -43,12 +44,20 @@ document.addEventListener("DOMContentLoaded", () => {
         button.className = "btn btn-sm btn-outline-secondary align-self-end mt-1";
         button.textContent = "Прочитано";
 
-        button.onclick = () => {
-            li.remove();
+        let autoDismissTimer = null;
+        let isRead = false;
+
+        const markAsRead = () => {
+            if (isRead) return;
+            isRead = true;
+
+            clearTimeout(autoDismissTimer);
+            li.classList.add("fade-out");
+            setTimeout(() => li.remove(), 500);
+
             unreadCount -= 1;
             updateCounter();
 
-            // 📨 Отправка на сервер
             fetch("/notifications/mark-read/", {
                 method: "POST",
                 headers: {
@@ -66,9 +75,19 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         };
 
+        button.onclick = markAsRead;
+
         li.appendChild(title);
         li.appendChild(message);
         li.appendChild(button);
+
+        if (autoDismiss) {
+            autoDismissTimer = setTimeout(() => {
+                li.classList.add("fade-out");
+                setTimeout(() => li.remove(), 500);
+                // Не уменьшаем счётчик — пользователь не нажал "Прочитано"
+            }, 30000);
+        }
 
         return li;
     }
@@ -117,11 +136,17 @@ document.addEventListener("DOMContentLoaded", () => {
             unreadCount += 1;
             updateCounter();
 
+            // Удалим "Нет новых уведомлений"
             if (list.children.length === 1 && list.children[0].classList.contains("text-muted")) {
                 list.innerHTML = '';
             }
 
-            list.prepend(createNotificationElement(data));
+            const li = createNotificationElement(data, true);
+            list.prepend(li);
+
+            // Автооткрытие меню (если оно закрыто)
+            const dropdown = bootstrap.Dropdown.getOrCreateInstance(bell);
+            dropdown.show();
         };
 
         socket.onclose = function () {
@@ -130,7 +155,6 @@ document.addEventListener("DOMContentLoaded", () => {
         };
     }
 
-    // Загрузка уведомлений при открытии меню
     bell.addEventListener("click", () => {
         fetchUnreadNotifications();
     });

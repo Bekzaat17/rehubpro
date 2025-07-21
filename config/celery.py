@@ -3,6 +3,8 @@
 import os
 from celery import Celery
 
+tz = os.getenv("TZ", "Asia/Almaty")
+os.environ.setdefault("TZ", tz)
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 
 app = Celery('rehubpro')

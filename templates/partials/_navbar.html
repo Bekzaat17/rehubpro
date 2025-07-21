@@ -40,7 +40,22 @@
         padding: 0.75rem;
         margin-bottom: 0.5rem;
         animation: fadeIn 0.3s ease-in-out;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.05); /* вместо полосы */
+        box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+    }
+
+    .notification-item.fade-out {
+        opacity: 0;
+        transform: translateY(-10px);
+        pointer-events: none;
+        height: 0;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
     }
 
     .notification-item h6 {
