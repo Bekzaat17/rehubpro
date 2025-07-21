@@ -31,6 +31,7 @@ urlpatterns = [
     path("storage/", include("storage.urls", namespace="storage")),
     path("test/", include("test.urls")),
     path("notifications/", include("notifications.urls", namespace="notifications")),
+    path("reminders/", include("reminders.urls", namespace="reminders")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # TODO vyvesti media za root

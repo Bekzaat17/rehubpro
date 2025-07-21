@@ -135,11 +135,13 @@
     </div>
 
     <!-- JS -->
-    <script>
-        const CURRENT_USER_ID = "{{ request.user.id }}";
-    </script>
+    {% if request.user.is_authenticated %}
+        <script>
+            const CURRENT_USER_ID = "{{ request.user.id }}";
+        </script>
+        <script src="{% static 'js/notifications/websocketclient.js' %}"></script>
+    {% endif %}
     <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-    <script src="{% static 'js/notifications/websocketclient.js' %}"></script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>

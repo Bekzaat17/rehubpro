@@ -21,24 +21,74 @@ services:
     networks:
       - backend
 
+  migrator:
+    build:
+      context: .
+      dockerfile: docker/django/Dockerfile
+    entrypoint: ["sh", "-c", "python manage.py migrate"]
+    volumes:
+      - .:/app
+    env_file: .env
+    depends_on:
+      - db
+    networks:
+      - backend
+    container_name: migrator
+
   web:
     build:
       context: .
       dockerfile: docker/django/Dockerfile
-    command: bash -c "python manage.py runserver 0.0.0.0:8000"
+    entrypoint: ["sh", "docker/entrypoint.sh"]
+    command: daphne -b 0.0.0.0 -p 8000 config.asgi:application
     volumes:
       - .:/app
       - media_volume:/vol/web/media
       - static_volume:/vol/web/static
     env_file: .env
+    environment:
+      - SERVICE_NAME=web
     ports:
       - "8000:8000"
     depends_on:
       - db
       - redis
+      - migrator
     networks:
       - backend
     container_name: web
+
+  celery:
+    build:
+      context: .
+      dockerfile: docker/django/Dockerfile
+    entrypoint: ["sh", "-c", "docker/wait_for_migrations.sh && celery -A config worker --loglevel=info"]
+    volumes:
+      - .:/app
+    env_file: .env
+    depends_on:
+      - db
+      - redis
+      - migrator
+    networks:
+      - backend
+    container_name: celery
+
+  celery-beat:
+    build:
+      context: .
+      dockerfile: docker/django/Dockerfile
+    entrypoint: ["sh", "-c", "docker/wait_for_migrations.sh && celery -A config beat --loglevel=info --scheduler django_celery_beat.schedulers:DatabaseScheduler"]
+    volumes:
+      - .:/app
+    env_file: .env
+    depends_on:
+      - db
+      - redis
+      - migrator
+    networks:
+      - backend
+    container_name: celery-beat
 
   nginx:
     image: nginx:alpine

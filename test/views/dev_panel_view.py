@@ -1,7 +1,7 @@
 from django.views import View
 from django.shortcuts import render
 from django.contrib.auth import get_user_model
-from notifications.notification_service import NotificationService
+from notifications.services.notification_service import NotificationService
 
 User = get_user_model()
 

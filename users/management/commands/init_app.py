@@ -7,6 +7,7 @@ from django.db import transaction
 class Command(BaseCommand):
     help = "Initial setup: migrate, create demo data, etc."
 
+    # ochered zapuska vajna
     ordered_commands = [
         ("populate_demo_data", "🧪 Loading initial structure..."),
         ("create_consultant", "👥 Creating demo stuff..."),              # for test systems

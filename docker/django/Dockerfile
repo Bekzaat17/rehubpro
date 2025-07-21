@@ -22,6 +22,7 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     zlib1g-dev \
     curl \
+    netcat-openbsd \
  && rm -rf /var/lib/apt/lists/*
 
 # Установка зависимостей Python
@@ -32,8 +33,9 @@ RUN pip install -r requirements.txt
 # Копируем всё приложение
 COPY . .
 
-# Делаем entrypoint исполняемым
+# Делаем скрипты исполняемыми
 RUN chmod +x docker/entrypoint.sh
+RUN chmod +x docker/wait_for_migrations.sh
 
-# Указываем shell для запуска скрипта
+# Указываем shell для запуска entrypoint
 ENTRYPOINT ["sh", "docker/entrypoint.sh"]

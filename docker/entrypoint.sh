@@ -1,35 +1,20 @@
 #!/bin/bash
-set -e  # Остановить выполнение скрипта при любой ошибке (fail-fast)
 
-# =============================
-# 📦 Сборка статических файлов
-# =============================
-echo "📦 Collecting static files..."
-python manage.py collectstatic --noinput
+# Ждём готовности БД
+echo "⏳ Waiting for PostgreSQL to be ready..."
+while ! nc -z "$POSTGRES_HOST" "$POSTGRES_PORT"; do
+  sleep 0.1
+done
+echo "✅ PostgreSQL is ready!"
 
-# =============================
-# 🧱 Применение миграций БД
-# =============================
-echo "🧱 Applying database migrations..."
-python manage.py migrate
+# Если это контейнер web — выполняем collectstatic и init_app
+if [ "$SERVICE_NAME" = "web" ]; then
+  echo "📦 Collecting static files..."
+  python manage.py collectstatic --noinput
 
-# =============================
-# 🚀 Инициализация демо-данных
-# =============================
-# Команда /users/management/commands init_app создаёт справочники, роли, резидентов и т.д.
-# По умолчанию она не будет перезаписывать данные, если уже есть пользователи.
-# Для принудительной инициализации используй: --force
-echo "🚀 Running initial setup..."
-python manage.py init_app # Добавь --force при необходимости
+  echo "🚀 Running initial setup (init_app)..."
+  python manage.py init_app
+fi
 
-# =============================
-# 🔥 Запуск Gunicorn-сервера
-# =============================
-# Используем exec, чтобы заменить текущий процесс скрипта на gunicorn
-# Это важно для правильной обработки сигналов (например, в Docker)
-# echo "🔥 Starting Gunicorn..."
-# exec gunicorn config.wsgi:application --bind 0.0.0.0:8000
-
-
-echo "🔥 Starting Daphne..."
-exec daphne -b 0.0.0.0 -p 8000 config.asgi:application
+# Запускаем то, что передано как CMD или через `docker-compose command`
+exec "$@"

@@ -1,5 +1,5 @@
-from .services.websocket_sender import WebSocketSender
-from .services.base import NotificationSender
+from notifications.services.websocket_sender import WebSocketSender
+from notifications.services.base import NotificationSender
 
 
 class NotificationService:

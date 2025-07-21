@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from django.urls import reverse_lazy
+from celery.schedules import crontab
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -21,8 +22,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django_celery_beat",
     # Твои приложения
-    "users", "residents", "tasks", "lectures", "references",
+    "users", "residents", "tasks", "lectures", "references", "reminders",
     "reports", "roles", "storage", "analytics", "notifications",
     # Channels, если используешь
     "channels",
@@ -71,6 +73,11 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
+# --- Celery ---
+CELERY_BROKER_URL = f"redis://{os.getenv('REDIS_HOST', 'redis')}:{os.getenv('REDIS_PORT', 6379)}/0"
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
 
 # --- База данных ---
 DATABASES = {
