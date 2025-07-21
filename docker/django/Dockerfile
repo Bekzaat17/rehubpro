@@ -1,11 +1,13 @@
 FROM python:3.11-slim
 
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+# --- Основные переменные окружения ---
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+ENV TZ=Asia/Almaty
 
 WORKDIR /app
 
-# Установка системных зависимостей для WeasyPrint и прочего
+# --- Установка системных зависимостей + tzdata ---
 RUN apt-get update && apt-get install -y \
     build-essential \
     libpango-1.0-0 \
@@ -22,20 +24,23 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     zlib1g-dev \
     curl \
+    tzdata \
     netcat-openbsd \
+ && cp /usr/share/zoneinfo/$TZ /etc/localtime \
+ && echo $TZ > /etc/timezone \
  && rm -rf /var/lib/apt/lists/*
 
-# Установка зависимостей Python
+# --- Установка Python-зависимостей ---
 COPY requirements.txt .
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-# Копируем всё приложение
+# --- Копируем код проекта ---
 COPY . .
 
-# Делаем скрипты исполняемыми
+# --- Делаем скрипты исполняемыми ---
 RUN chmod +x docker/entrypoint.sh
 RUN chmod +x docker/wait_for_migrations.sh
 
-# Указываем shell для запуска entrypoint
+# --- Указываем shell для запуска entrypoint ---
 ENTRYPOINT ["sh", "docker/entrypoint.sh"]

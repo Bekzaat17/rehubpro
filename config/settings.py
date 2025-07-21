@@ -101,7 +101,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # --- Язык, время ---
 LANGUAGE_CODE = "ru"
-TIME_ZONE = "Asia/Almaty"
+TIME_ZONE = os.getenv("TZ")
 USE_I18N = True
 USE_TZ = True
 

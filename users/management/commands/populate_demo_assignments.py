@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand
-from datetime import date, timedelta, datetime
+from django.utils import timezone
+from datetime import date, timedelta, datetime, time
 import random
 
 from residents.models import Resident
@@ -38,7 +39,9 @@ class Command(BaseCommand):
         for resident in Resident.objects.all():
             self.stdout.write(self.style.NOTICE(f"👤 {resident.full_name}"))
 
-            current_datetime = datetime.combine(resident.date_of_admission, datetime.min.time())
+            current_datetime = timezone.make_aware(
+                datetime.combine(resident.date_of_admission, time.min)
+            )
             task_number = 1
 
             while task_number <= 7:
@@ -125,7 +128,9 @@ class Command(BaseCommand):
                     break
 
                 # ⏩ Новое задание назначаем через 1 минуту после завершения предыдущего
-                current_datetime = datetime.combine(assigned_task.completed_at, datetime.min.time()) + timedelta(minutes=1)
+                current_datetime = timezone.make_aware(
+                    datetime.combine(assigned_task.completed_at, time.min)
+                ) + timedelta(minutes=1)
                 task_number += 1
 
         self.stdout.write(self.style.SUCCESS("\n🎉 Генерация завершена."))
