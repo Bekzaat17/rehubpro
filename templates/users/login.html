@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load form_tags %}
+{% load logo_tags %}
 
 {% block title %}Вход — {{ PROJECT_NAME }}{% endblock %}
 
@@ -8,8 +9,14 @@
 <div class="row justify-content-center">
     <div class="col-md-6 col-lg-4">
         <div class="card shadow-sm border-0">
-            <div class="card-body p-4">
-                <h4 class="card-title text-center mb-4 text-primary-custom">Вход в систему</h4>
+            <div class="card-body p-4 text-center">
+
+                {% logo_url as logo %}
+                {% if logo %}
+                    <img src="{{ logo }}" alt="Логотип" class="mb-4" style="max-height: 80px;">
+                {% else %}
+                    <h4 class="card-title mb-4 text-primary-custom">Вход в систему</h4>
+                {% endif %}
 
                 {% if error %}
                     <div class="alert alert-danger">
@@ -17,7 +24,7 @@
                     </div>
                 {% elif form.errors %}
                     <div class="alert alert-danger">
-                        Пожалуйста, исправьте ошибки в форме.
+                        Неправильный логин или пароль
                     </div>
                 {% endif %}
 

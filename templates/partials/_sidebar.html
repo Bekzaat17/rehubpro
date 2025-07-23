@@ -1,6 +1,15 @@
+{% load static %}
+{% load logo_tags %}
 <nav class="sidebar d-flex flex-column p-3">
-    <h4 class="text-white">{{ PROJECT_NAME }}</h4>
-    <hr class="text-secondary">
+    <div class="text-center mb-3">
+        {% logo_url as logo %}
+        {% if logo %}
+            <img src="{{ logo }}" alt="Логотип" style="max-width: 100%; height: auto;">
+        {% else %}
+            <h4 class="text-white">{{ PROJECT_NAME }}</h4>
+        {% endif %}
+    </div>
+{#    <hr class="text-secondary">#}
     <ul class="nav nav-pills flex-column mb-auto">
         <li>
             <a href="{% url 'users:dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
