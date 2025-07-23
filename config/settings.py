@@ -25,7 +25,7 @@ INSTALLED_APPS = [
     "django_celery_beat",
     # Твои приложения
     "users", "residents", "tasks", "lectures", "references", "reminders",
-    "reports", "roles", "storage", "analytics", "notifications",
+    "reports", "roles", "storage", "analytics", "notifications", "licenses",
     # Channels, если используешь
     "channels",
     # CORS (если используешь)
@@ -34,6 +34,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "licenses.middleware.license_check.LicenseCheckMiddleware",
     "corsheaders.middleware.CorsMiddleware",  # перед CommonMiddleware
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -56,6 +57,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "core.context_processors.global_variables",
+                "core.context_processors.license_banner",
             ],
         },
     },

@@ -86,6 +86,42 @@
             border-color: var(--secondary-color);
             color: #fff;
         }
+
+        /* 🔔 Баннер лицензии */
+        #license-banner {
+            text-align: center;
+            font-weight: bold;
+            font-size: 16px;
+            padding: 10px;
+            color: white;
+            pointer-events: none;
+        }
+
+        #license-banner.warning {
+            background-color: rgba(255, 165, 0, 0.9);
+        }
+
+        #license-banner.grace {
+            background-color: rgba(255, 0, 0, 0.9);
+        }
+
+        /* ⛔ Expired — полная блокировка */
+        #license-expired-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background-color: rgba(255, 0, 0, 0.85);
+            color: white;
+            z-index: 10000;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: center;
+            padding: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: all;
+        }
     </style>
 
     {% block extra_css %}{% endblock %}
@@ -100,6 +136,12 @@
             {% include "partials/_navbar.html" %}
         {% endif %}
 
+        {% if license_status == "warning" or license_status == "grace" %}
+            <div id="license-banner" class="{{ license_status }}">
+                {{ license_warning }}
+            </div>
+        {% endif %}
+
         <main>
             <div class="container">
                 {% block content %}{% endblock %}
@@ -109,7 +151,12 @@
         {% include "partials/_footer.html" %}
     </div>
 
-    <!-- JS -->
+    {% if license_status == "expired" %}
+        <div id="license-expired-overlay">
+            ⛔ Лицензия полностью истекла. Доступ заблокирован. Обратитесь к администратору.
+        </div>
+    {% endif %}
+
     {% if request.user.is_authenticated %}
         <script>
             const CURRENT_USER_ID = "{{ request.user.id }}";
