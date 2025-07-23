@@ -4,9 +4,16 @@ from django.contrib.auth import get_user_model
 from .folder import Folder
 
 User = get_user_model()
-
+#TODO nujno sdelat sborwik musora
 class StoredFile(models.Model):
-    folder = models.ForeignKey(Folder, on_delete=models.CASCADE, related_name='files')
+    folder = models.ForeignKey(
+        Folder,
+        on_delete=models.CASCADE,
+        related_name='files',
+        null=True,
+        blank=True,
+        verbose_name="Папка",
+    )
     file = models.FileField(upload_to='storage/')
     name = models.CharField(max_length=255)
     uploaded_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)

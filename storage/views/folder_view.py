@@ -2,6 +2,7 @@ from django.views import View
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
 from storage.models import Folder
+from storage.models import StoredFile
 from storage.services.folder_service import FolderService
 
 class FolderView(LoginRequiredMixin, View):
@@ -10,7 +11,7 @@ class FolderView(LoginRequiredMixin, View):
 
         current_folder = get_object_or_404(Folder, id=folder_id) if folder_id else None
         subfolders = current_folder.subfolders.all() if current_folder else Folder.objects.filter(parent=None)
-        files = current_folder.files.all() if current_folder else []
+        files = current_folder.files.all() if current_folder else StoredFile.objects.filter(folder=None)
 
         if query:
             subfolders = subfolders.filter(name__icontains=query)
