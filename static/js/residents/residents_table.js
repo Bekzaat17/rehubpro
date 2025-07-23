@@ -53,6 +53,7 @@ window.refreshResidentTableData = function () {
             case 4: td.classList.add("col-colored-4"); break;
             case 5: td.classList.add("col-colored-5"); break;
             case 6: td.classList.add("col-colored-6"); break;
+            case 7: td.classList.add("col-colored-7"); break;
           }
 
           tr.appendChild(td);

@@ -57,6 +57,18 @@ document.addEventListener("DOMContentLoaded", function () {
       if (value === data.dependency_type) option.selected = true;
       select.appendChild(option);
     });
+
+    const statusSelect = document.getElementById("residentStatus");
+    if (statusSelect) {
+      statusSelect.innerHTML = "";
+      (data.status_choices || []).forEach(([value, label]) => {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = label;
+        if (value === data.status) option.selected = true;
+        statusSelect.appendChild(option);
+      });
+    }
   }
 
   // 📋 Вкладка "Задания"
@@ -117,6 +129,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const payload = {
       notes: document.getElementById("residentNotes")?.value,
       dependency_type: document.getElementById("residentDependency")?.value,
+      status: document.getElementById("residentStatus")?.value,
     };
 
     fetch(`/residents/api/residents/${currentResidentId}/profile/`, {

@@ -21,6 +21,7 @@ class ResidentsDataView(LoginRequiredMixin, View):
 
         column_names = [
             "ФИО",
+            "Статус",
             "Дата поступления",
             "Текущее задание",
             "Последний прогресс",
@@ -92,6 +93,7 @@ class ResidentsDataView(LoginRequiredMixin, View):
                 "id": r.id,
                 "cells": [
                     full_name,
+                    r.get_status_display(),
                     format_date(r.date_of_admission),
                     task_display,
                     progress_display,

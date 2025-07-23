@@ -2,7 +2,7 @@
 
 from django.core.management.base import BaseCommand
 from residents.models import Resident
-from residents.enums import DependencyType
+from residents.enums import DependencyType, ResidentStatus
 from datetime import date, timedelta
 import random
 
@@ -108,6 +108,17 @@ class Command(BaseCommand):
 
         created_count = 0
         for resident_data in demo_residents:
+            admission_days_ago = random.randint(10, 90)
+            date_of_admission = today - timedelta(days=admission_days_ago)
+
+            # 👇 Вычисляем статус по количеству дней
+            if admission_days_ago < 20:
+                status = ResidentStatus.NEWBIE
+            elif admission_days_ago < 40:
+                status = ResidentStatus.IN_PROGRESS
+            else:
+                status = ResidentStatus.ADVANCED
+
             resident, created = Resident.objects.get_or_create(
                 identical_number=resident_data["identical_number"],
                 defaults={
@@ -115,9 +126,10 @@ class Command(BaseCommand):
                     "last_name": resident_data["last_name"],
                     "middle_name": resident_data["middle_name"],
                     "date_of_birth": resident_data["date_of_birth"],
-                    "date_of_admission": today - timedelta(days=random.randint(10, 90)),
+                    "date_of_admission": date_of_admission,
                     "dependency_type": resident_data["dependency_type"],
                     "notes": resident_data["notes"],
+                    "status": status,
                 }
             )
             if created:

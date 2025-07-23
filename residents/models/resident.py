@@ -1,6 +1,6 @@
 from django.db import models
 from datetime import date
-from ..enums import DependencyType
+from ..enums import DependencyType, ResidentStatus
 from ..managers import ActiveResidentManager
 
 
@@ -28,6 +28,14 @@ class Resident(models.Model):
         default=DependencyType.OTHER,
         verbose_name="Тип зависимости"
     )
+
+    status = models.CharField(
+        max_length=20,
+        choices=ResidentStatus.choices,
+        default=ResidentStatus.NEWBIE,
+        verbose_name="Статус"
+    )
+
 
     identical_number = models.CharField(
         max_length=20,

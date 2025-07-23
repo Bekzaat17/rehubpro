@@ -93,3 +93,10 @@ class DependencyType(models.TextChoices):
     F99 = "F99", _("Неспецифицированные психические расстройства (F99)")
 
     OTHER = "OTHER", _("Другое")
+
+
+
+class ResidentStatus(models.TextChoices):
+    NEWBIE = "newbie", _("Новичок")
+    IN_PROGRESS = "in_progress", _("Идущий")
+    ADVANCED = "advanced", _("Впереди идущий")

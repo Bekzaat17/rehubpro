@@ -2,7 +2,7 @@ from datetime import timedelta
 from django.utils import timezone
 
 from residents.models import Resident
-from residents.enums import DependencyType
+from residents.enums import DependencyType, ResidentStatus
 from tasks.models.task_progress import TaskProgress
 from roles.models.resident_role_assignment import ResidentRoleAssignment
 from residents.serializers.resident_profile_serializer import ResidentProfileSerializer
@@ -21,6 +21,8 @@ class ResidentProfileService:
             "full_name": resident.full_name,
             "birthdate": resident.date_of_birth,
             "dependency_choices": list(DependencyType.choices),
+            "status": resident.status,
+            "status_choices": list(ResidentStatus.choices),
         })
 
         # Задания за 14 дней

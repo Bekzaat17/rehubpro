@@ -15,6 +15,7 @@ class ResidentForm(forms.ModelForm):
             'identical_number',
             'notes',
             'is_active',
+            'status',
         ]
         widgets = {
             'date_of_birth': forms.DateInput(attrs={'type': 'date'}),
