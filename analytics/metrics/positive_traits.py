@@ -19,7 +19,7 @@ class PositiveTraitsMetric(BaseMetric):
 
         # готовим данные для PieChart: label — trait, value — count
         return {
-            "title": "Положительные черты (частота)",
+            "title": "Положительные черты",
             "labels": [trait for trait, _ in top_traits],
             "values": [count for _, count in top_traits]
         }

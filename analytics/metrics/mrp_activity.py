@@ -35,7 +35,7 @@ class MRPActivityMetric(BaseMetric):
         ]
 
         return {
-            "title": "Активность на занятиях MRP",
+            "title": "Активность на мероприятиях",
             "labels": labels,
             "values": values,
             "value_labels": value_labels,

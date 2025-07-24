@@ -32,7 +32,7 @@ class ResidentRoleResponsibilityMetric(BaseMetric):
                     continue  # пропускаем удалённые роли
                 role_name = role.name
                 roles.add(role_name)
-                raw_data[(role_name, date)] = status.status
+                raw_data[(role_name, date)] = status.get_status_display()
 
         # Упорядочиваем
         sorted_roles = sorted(roles)
@@ -47,7 +47,7 @@ class ResidentRoleResponsibilityMetric(BaseMetric):
             values.append(row)
 
         return {
-            "title": "Ответственность по ролям",
+            "title": "Ответственность по функции",
             "rows": sorted_roles,
             "columns": sorted_dates,
             "values": values

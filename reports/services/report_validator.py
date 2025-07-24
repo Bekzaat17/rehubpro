@@ -72,7 +72,7 @@ class ReportValidator:
                 missing.append(str(role))
 
         if missing:
-            raise ValidationError(f"Не указана ответственность по ролям: {', '.join(missing)}")
+            raise ValidationError(f"Не указана ответственность по функции: {', '.join(missing)}")
 
     def _validate_required_fields(self, report: ResidentReport):
         missing = []

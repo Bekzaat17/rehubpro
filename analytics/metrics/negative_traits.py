@@ -17,7 +17,7 @@ class NegativeTraitsMetric(BaseMetric):
         top_traits = trait_counter.most_common(5)
 
         return {
-            "title": "Негативные черты (частота)",
+            "title": "Негативные черты",
             "labels": [trait for trait, _ in top_traits],
             "values": [count for _, count in top_traits]
         }

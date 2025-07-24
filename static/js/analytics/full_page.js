@@ -199,8 +199,8 @@ function renderChart(ctx, content) {
         const row = document.createElement("tr");
         row.innerHTML = `<th>${date}</th>` + content.rows.map((_, roleIndex) => {
           const val = content.values[roleIndex][dateIndex];
-          const color = val === "responsible" ? "text-success fw-bold" :
-                        val === "irresponsible" ? "text-danger fw-bold" : "text-muted";
+          const color = val === "Ответственный" ? "text-success fw-bold" :
+                        val === "Безответственный" ? "text-danger fw-bold" : "text-muted";
           return `<td class="${color}">${val ?? "-"}</td>`;
         }).join("");
         tbody.appendChild(row);

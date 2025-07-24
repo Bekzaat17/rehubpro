@@ -12,7 +12,7 @@ class USTSInfoSharedMetric(BaseMetric):
             counter[key] += 1
 
         return {
-            "title": "Передача информации в УЦСТ",
+            "title": "Информацию подает и принимает на ровных чувствах УСТС",
             "labels": list(counter.keys()),
             "values": list(counter.values())
         }

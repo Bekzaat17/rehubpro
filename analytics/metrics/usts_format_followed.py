@@ -12,7 +12,7 @@ class USTSFormatFollowedMetric(BaseMetric):
             counter[key] += 1
 
         return {
-            "title": "Соблюдение формата УЦСТ",
+            "title": "Соблюдение формата УСТС",
             "labels": list(counter.keys()),
             "values": list(counter.values())
         }
