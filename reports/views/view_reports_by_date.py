@@ -46,7 +46,7 @@ class ViewReportsByDateView(LoginRequiredMixin, TemplateView):
                 for tc in report.task_comments.all()
             }
 
-            # 👔 Статусы по ролям
+            # 👔 Статусы по функции
             role_statuses = {
                 rs.role_assignment.role.name: rs.get_status_display()
                 for rs in report.role_statuses.all()

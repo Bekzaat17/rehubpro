@@ -104,7 +104,7 @@ class ExportReportsView(View):
 
             role_statuses = report.get("role_statuses", {})
             if role_statuses:
-                content.append("   👔 Статусы по ролям:")
+                content.append("   👔 Статусы по функции:")
                 for role_name, status in role_statuses.items():
                     content.append(f"     - {role_name}: {status}")
 
