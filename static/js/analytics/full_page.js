@@ -2,12 +2,12 @@ document.addEventListener("DOMContentLoaded", function () {
   const form = document.getElementById("filter-form");
   const resultsDiv = document.getElementById("analytics-results");
   const exportBtn = document.getElementById("export-button");
+  const pdfWrapper = document.getElementById("pdf-wrapper");
 
   if (!form || !resultsDiv) return;
 
   form.addEventListener("submit", function (e) {
     e.preventDefault();
-
     const formData = new FormData(form);
     const params = new URLSearchParams(formData).toString();
 
@@ -26,7 +26,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
         for (const [metric, content] of Object.entries(data)) {
           const col = document.createElement("div");
+          const isHeatmap = ["heatmap"].includes(content.type);
           col.className = "col-12";
+
+          if (isHeatmap) {
+            col.classList.add("page-break-custom");
+          }
 
           const chartId = `chart-${metric}`;
           const isCustom = ["heatmap", "timeline"].includes(content.type);
@@ -37,9 +42,7 @@ document.addEventListener("DOMContentLoaded", function () {
               <div class="${isCustom ? "" : "chart-wrapper"}" id="${chartId}"></div>
             </div>
           `;
-
           resultsDiv.appendChild(col);
-
           const target = document.getElementById(chartId);
           renderChart(target, content);
         }
@@ -51,20 +54,48 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   exportBtn?.addEventListener("click", function () {
-    const pdfHeader = document.getElementById("pdf-header");
-    const element = document.getElementById("pdf-wrapper");
+    const clone = pdfWrapper.cloneNode(true);
+    const header = clone.querySelector("#pdf-header");
+    header.style.display = "block";
 
-    pdfHeader.style.display = "block";
+    const pageBreak = document.createElement("div");
+    pageBreak.className = "page-break";
+    header.after(pageBreak);
+
+    const canvases = document.querySelectorAll("canvas");
+    const cloneCanvases = clone.querySelectorAll("canvas");
+
+    canvases.forEach((canvas, index) => {
+      const imgData = canvas.toDataURL("image/png");
+      const img = new Image();
+      img.src = imgData;
+      img.style.width = "100%";
+
+      const parent = cloneCanvases[index]?.parentNode;
+      if (parent) {
+        parent.innerHTML = "";
+        parent.appendChild(img);
+      }
+    });
+
+    const fioRaw = document.getElementById("pdf-resident-name").textContent.trim();
+    const fioSafe = fioRaw.replace(/\s+/g, "_");
+    const period = document.getElementById("pdf-period").textContent.trim().replace(/\s*—\s*/g, "_");
+    const filename = `${fioSafe}-${period || Date.now()}.pdf`;
 
     html2pdf().set({
-      margin: 0.5,
-      filename: `отчёт-${Date.now()}.pdf`,
+      margin: [0.8, 0.5, 0.5, 0.5],
+      filename: filename,
       image: { type: "jpeg", quality: 0.98 },
-      html2canvas: { scale: 2 },
+      html2canvas: {
+        scale: 2,
+        useCORS: true,
+        allowTaint: false,
+        logging: false,
+        scrollY: 0
+      },
       jsPDF: { unit: "in", format: "a4", orientation: "portrait" },
-    }).from(element).save().then(() => {
-      pdfHeader.style.display = "none";
-    });
+    }).from(clone).save();
   });
 });
 
