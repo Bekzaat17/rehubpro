@@ -58,16 +58,13 @@
 <style>
   .analytics-block {
     max-width: 900px;
-    margin: 0 auto 40px;
-    padding: 20px;
-    border: 1px solid #dee2e6;
+    margin: 0 auto;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
-    background: white;
   }
 
   .analytics-block:first-child {
-      margin-top: 14px; /* ⬅️ чуть больше отступ для самой первой карточки */
+    margin-top: 14px;
   }
 
   .chart-wrapper {
@@ -91,6 +88,11 @@
   .page-break {
     page-break-after: always;
     break-after: always;
+  }
+
+  .page-break-custom {
+    page-break-before: always;
+    break-before: always;
   }
 
   .timeline-clean {
@@ -147,11 +149,6 @@
 
   .heatmap-row-separator tr:not(:last-child) td {
     border-bottom: 3px solid #dee2e6;
-  }
-
-  .page-break-custom {
-      page-break-before: always;
-      break-before: always;
   }
 </style>
 

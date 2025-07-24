@@ -24,27 +24,34 @@ document.addEventListener("DOMContentLoaded", function () {
         const dateTo = form.querySelector("#date_to").value;
         document.getElementById("pdf-period").textContent = dateFrom && dateTo ? `${dateFrom} — ${dateTo}` : "—";
 
+        let chartCounter = 0;
+
         for (const [metric, content] of Object.entries(data)) {
           const col = document.createElement("div");
-          const isHeatmap = ["heatmap"].includes(content.type);
+          const isCustom = ["heatmap", "timeline"].includes(content.type);
           col.className = "col-12";
 
-          if (isHeatmap) {
+          // Вставить page-break если:
+          // - кастомный чарт (heatmap / timeline): всегда page-break ПЕРЕД
+          // - или каждые 2 обычных графика (т.е. 3-й, 5-й и т.д.): page-break ПЕРЕД
+          if (isCustom || chartCounter > 0 && chartCounter % 2 === 0) {
             col.classList.add("page-break-custom");
           }
 
           const chartId = `chart-${metric}`;
-          const isCustom = ["heatmap", "timeline"].includes(content.type);
 
           col.innerHTML = `
-            <div class="card shadow-sm p-3 analytics-block">
-              <h5 class="card-title mb-3">${content.title || metric}</h5>
+            <div class="analytics-block">
+              <h5 class="mb-3">${content.title || metric}</h5>
               <div class="${isCustom ? "" : "chart-wrapper"}" id="${chartId}"></div>
             </div>
           `;
+
           resultsDiv.appendChild(col);
           const target = document.getElementById(chartId);
           renderChart(target, content);
+
+          chartCounter++;
         }
       })
       .catch(err => {
