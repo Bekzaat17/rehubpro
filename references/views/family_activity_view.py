@@ -4,7 +4,7 @@ from ..forms.family_activity_form import FamilyActivityForm
 
 class FamilyActivityView(BaseReferenceView):
     """
-    API-вьюха для справочника Семейная активность.
+    API-вьюха для справочника Активность с семье.
     """
     model = FamilyActivity
     form_class = FamilyActivityForm

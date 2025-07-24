@@ -36,7 +36,7 @@ class FamilyActivityMetric(BaseMetric):
         ]
 
         return {
-            "title": "Семейная активность",
+            "title": "Активность с семье",
             "labels": labels,
             "values": values,
             "value_labels": value_labels,

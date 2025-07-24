@@ -10,7 +10,7 @@ class FamilyActivityFactory(BaseReferenceFactory):
         return FamilyActivityForm
 
     def get_verbose_name(self):
-        return "Семейная активность"
+        return "Активность с семье"
 
     def get_columns(self):
         return ["name", "score", "is_active"]
