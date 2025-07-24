@@ -15,10 +15,14 @@ document.addEventListener("DOMContentLoaded", function () {
       .then(res => res.json())
       .then(data => {
         resultsDiv.innerHTML = "";
+        exportBtn.disabled = false;
 
-        if (exportBtn) {
-          exportBtn.disabled = false;
-        }
+        document.getElementById("pdf-resident-name").textContent =
+          form.querySelector("#resident option:checked")?.textContent.trim() || "—";
+
+        const dateFrom = form.querySelector("#date_from").value;
+        const dateTo = form.querySelector("#date_to").value;
+        document.getElementById("pdf-period").textContent = dateFrom && dateTo ? `${dateFrom} — ${dateTo}` : "—";
 
         for (const [metric, content] of Object.entries(data)) {
           const col = document.createElement("div");
@@ -46,20 +50,22 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   });
 
-  if (exportBtn) {
-    exportBtn.addEventListener("click", function () {
-      const element = document.getElementById("analytics-results");
-      const opt = {
-        margin: 0.5,
-        filename: "analytics.pdf",
-        image: { type: "jpeg", quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
-      };
+  exportBtn?.addEventListener("click", function () {
+    const pdfHeader = document.getElementById("pdf-header");
+    const element = document.getElementById("pdf-wrapper");
 
-      html2pdf().set(opt).from(element).save();
+    pdfHeader.style.display = "block";
+
+    html2pdf().set({
+      margin: 0.5,
+      filename: `отчёт-${Date.now()}.pdf`,
+      image: { type: "jpeg", quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: "in", format: "a4", orientation: "portrait" },
+    }).from(element).save().then(() => {
+      pdfHeader.style.display = "none";
     });
-  }
+  });
 });
 
 function renderChart(ctx, content) {
@@ -83,17 +89,16 @@ function renderChart(ctx, content) {
         responsive: true,
         maintainAspectRatio: false,
         devicePixelRatio: window.devicePixelRatio || 1,
+        scales: {
+          y: { min: 0, max: 100 },
+        },
         plugins: {
           tooltip: {
             callbacks: {
-              label: function (context) {
-                const index = context.dataIndex;
-                const valueLabel = content.value_labels?.[index];
-                return valueLabel || context.parsed.y;
-              }
-            }
-          }
-        }
+              label: ctx => content.value_labels?.[ctx.dataIndex] || ctx.parsed.y,
+            },
+          },
+        },
       },
     }),
 
@@ -114,14 +119,10 @@ function renderChart(ctx, content) {
         plugins: {
           tooltip: {
             callbacks: {
-              label: function (context) {
-                const index = context.dataIndex;
-                const valueLabel = content.value_labels?.[index];
-                return valueLabel || context.parsed.y;
-              }
-            }
-          }
-        }
+              label: ctx => content.value_labels?.[ctx.dataIndex] || ctx.parsed.y,
+            },
+          },
+        },
       },
     }),
 
@@ -143,55 +144,71 @@ function renderChart(ctx, content) {
     }),
 
     heatmap: () => {
+      const container = document.createElement("div");
+      container.className = "table-responsive mt-3";
+
       const table = document.createElement("table");
-      table.className = "table table-bordered table-sm text-center mt-3";
+      table.className = "table table-borderless table-sm text-center align-middle heatmap-row-separator";
 
       const thead = document.createElement("thead");
       const headerRow = document.createElement("tr");
-      headerRow.innerHTML = `<th>Роль/Дата</th>${content.columns.map(col => `<th>${col}</th>`).join("")}`;
+      headerRow.innerHTML = `<th>Роль \\ Дата</th>` + content.rows.map(role => `<th>${role}</th>`).join("");
       thead.appendChild(headerRow);
 
       const tbody = document.createElement("tbody");
-      content.rows.forEach((rowName, i) => {
+
+      content.columns.forEach((date, dateIndex) => {
         const row = document.createElement("tr");
-        row.innerHTML = `<th>${rowName}</th>` + content.columns.map((_, j) => {
-          const val = content.values[i][j];
-          const color = val === "responsible" ? "bg-success text-white" :
-                        val === "irresponsible" ? "bg-danger text-white" : "";
+        row.innerHTML = `<th>${date}</th>` + content.rows.map((_, roleIndex) => {
+          const val = content.values[roleIndex][dateIndex];
+          const color = val === "responsible" ? "text-success fw-bold" :
+                        val === "irresponsible" ? "text-danger fw-bold" : "text-muted";
           return `<td class="${color}">${val ?? "-"}</td>`;
         }).join("");
         tbody.appendChild(row);
       });
 
       table.append(thead, tbody);
-      ctx.replaceWith(table);
+      container.appendChild(table);
+      ctx.replaceWith(container);
     },
 
     timeline: () => {
       const container = document.createElement("div");
-      container.className = "timeline-container mt-3";
+      container.className = "timeline-clean";
 
       for (const [date, entries] of Object.entries(content.timeline || {})) {
-        const section = document.createElement("div");
-        section.className = "mb-3";
-        section.innerHTML = `<h6>${date}</h6>`;
-
-        const list = document.createElement("ul");
-        list.className = "list-group list-group-flush";
-
         entries.forEach(entry => {
-          const item = document.createElement("li");
-          item.className = "list-group-item";
-          item.innerHTML = `<strong>${entry.task_title}</strong> (${entry.task_type}) — <em>${entry.stage}</em><br/><small>${entry.comment}</small>`;
-          list.appendChild(item);
-        });
+          const row = document.createElement("div");
+          row.className = "timeline-clean-row";
 
-        section.appendChild(list);
-        container.appendChild(section);
+          const dateBlock = document.createElement("div");
+          dateBlock.className = "timeline-date";
+          dateBlock.textContent = date;
+
+          const entryBlock = document.createElement("div");
+          entryBlock.className = "timeline-clean-entry";
+
+          const title = document.createElement("div");
+          title.className = "timeline-task";
+          title.textContent = entry.task_title || "—";
+
+          const stage = document.createElement("div");
+          stage.className = "timeline-stage";
+          stage.textContent = entry.stage || "—";
+
+          const comment = document.createElement("div");
+          comment.className = "timeline-comment";
+          comment.textContent = entry.comment || "—";
+
+          entryBlock.append(title, stage, comment);
+          row.append(dateBlock, entryBlock);
+          container.appendChild(row);
+        });
       }
 
       ctx.replaceWith(container);
-    },
+    }
   };
 
   const configFn = configMap[content.type];
@@ -199,8 +216,6 @@ function renderChart(ctx, content) {
   if (["heatmap", "timeline"].includes(content.type)) return configFn();
 
   const canvas = document.createElement("canvas");
-  canvas.style.width = "100%";
-  canvas.style.height = "100%";
   const ratio = window.devicePixelRatio || 1;
   canvas.width = ctx.offsetWidth * ratio;
   canvas.height = ctx.offsetHeight * ratio;

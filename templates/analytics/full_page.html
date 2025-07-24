@@ -7,7 +7,6 @@
 <div class="container mt-5">
   <h1 class="mb-4">Аналитика по резиденту</h1>
 
-  <!-- 🔎 Форма фильтрации -->
   <form id="filter-form" class="row g-3 mb-4">
     <div class="col-md-4">
       <label for="resident" class="form-label">Резидент</label>
@@ -34,8 +33,14 @@
     <button id="export-button" class="btn btn-outline-secondary" disabled>📤 Экспорт</button>
   </div>
 
-  <!-- 📄 Всё, что пойдёт в PDF -->
   <div id="pdf-wrapper">
+    <div id="pdf-header" class="text-center mb-4" style="display: none">
+      <img src="{% static 'logo/logo.png' %}" alt="Логотип" style="max-height: 60px;" />
+      <h2 class="mt-3">Аналитический отчёт</h2>
+      <p>Резидент: <strong id="pdf-resident-name">—</strong></p>
+      <p>Период: <span id="pdf-period">—</span></p>
+    </div>
+
     <div id="analytics-results" class="row gy-4">
       <p class="text-muted">Выберите фильтры и нажмите "Показать", чтобы увидеть аналитику.</p>
     </div>
@@ -45,6 +50,7 @@
 
 {% block extra_js %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <style>
@@ -76,6 +82,63 @@
   .page-break {
     page-break-after: always;
     break-after: always;
+  }
+
+  /* 🎨 Timeline (new design) */
+  .timeline-clean {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .timeline-clean-row {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 6px 10px;
+    border-bottom: 1px dashed #dee2e6;
+    background-color: #fff;
+  }
+
+  .timeline-clean-row:nth-child(even) {
+    background-color: #f8f9fa;
+  }
+
+  .timeline-clean-row .timeline-date {
+    min-width: 110px;
+    font-weight: 600;
+    color: #0d6efd;
+    margin-right: 10px;
+  }
+
+  .timeline-clean-entry {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    line-height: 1.35;
+    margin-bottom: 3px;
+    flex: 1;
+  }
+
+  .timeline-task {
+    font-weight: 600;
+    color: #212529;
+    min-width: 150px;
+  }
+
+  .timeline-stage {
+    font-weight: 500;
+    color: #6c757d;
+    min-width: 100px;
+  }
+
+  .timeline-comment {
+    font-style: italic;
+    color: #6c757d;
+    flex: 1;
+    min-width: 150px;
+  }
+
+  .heatmap-row-separator tr:not(:last-child) td {
+    border-bottom: 3px solid #dee2e6;
   }
 </style>
 
