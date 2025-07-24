@@ -39,7 +39,7 @@ class LicenseService:
         today = timezone.localdate()
         if today <= valid_until:
             days_left = (valid_until - today).days
-            if days_left <= 7:
+            if days_left <= 5:
                 return 'warning'
             return 'ok'
         elif today <= valid_until + timedelta(days=3):
