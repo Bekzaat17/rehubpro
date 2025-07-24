@@ -37,6 +37,11 @@
                 📊 Аналитика
             </a>
         </li>
+        <li class="nav-item">
+            <a href="{% url 'roles:assign_roles' %}" class="nav-link {% if request.resolver_match.url_name == 'assign_roles' %}active{% endif %}">
+                🧑‍🔧 Роли резидентов
+            </a>
+        </li>
         <li>
             <a href="{% url 'reminders:reminders_page' %}" class="nav-link {% if request.resolver_match.app_name == 'reminders' %}active{% endif %}">
                 🕒 Напоминания
