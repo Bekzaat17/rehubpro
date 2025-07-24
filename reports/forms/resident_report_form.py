@@ -1,5 +1,3 @@
-#reports/forms/resident_report_form.py
-
 from django import forms
 
 from references.models import (
@@ -43,9 +41,10 @@ class ResidentReportForm(forms.Form):
         self.task_comments = {}      # {task_id: comment}
         self.role_statuses = {}      # {role_id: status}
         self._init_dynamic_fields()
-        # --- УСТС (утреннее собрание ТС) ---
+
+        # --- УСТС ---
         self.fields["usts_info_shared"] = forms.ChoiceField(
-            label="Информацию подает УСТС:",
+            label="Информацию подаёт УСТС:",
             choices=[
                 ("true", "Ровно"),
                 ("false", "Не ровно"),
@@ -65,7 +64,7 @@ class ResidentReportForm(forms.Form):
         )
 
         self.fields["usts_comment"] = forms.CharField(
-            label="Комментарий по УТС",
+            label="Комментарий по УСТС",
             required=False,
             widget=forms.Textarea(attrs={"class": "form-control", "rows": 3})
         )
@@ -73,6 +72,17 @@ class ResidentReportForm(forms.Form):
         # 👉 Фильтрация черт характера по типу
         self.fields["positive_traits"].queryset = CharacterTrait.objects.filter(type=TraitType.STRENGTH)
         self.fields["negative_traits"].queryset = CharacterTrait.objects.filter(type=TraitType.DEFECT)
+
+        # 🏷️ Читаемые названия для всех полей
+        self.fields["emotional_state"].label = "Эмоциональное состояние"
+        self.fields["physical_state"].label = "Физическое состояние"
+        self.fields["motivation"].label = "Мотивация"
+        self.fields["daily_dynamics"].label = "Динамика"
+        self.fields["mrp_activity"].label = "Активность на МРП"
+        self.fields["family_activity"].label = "Активность в семье"
+        self.fields["comment"].label = "Общий комментарий"
+        self.fields["positive_traits"].label = "Положительные черты"
+        self.fields["negative_traits"].label = "Отрицательные черты"
 
     def _init_dynamic_fields(self):
         """
@@ -110,7 +120,7 @@ class ResidentReportForm(forms.Form):
         for role in roles:
             field_name = f"role_status_{role.id}"
             self.fields[field_name] = forms.ChoiceField(
-                label=f"Роль: {role.role.name}",
+                label=f"Функция: {role.role.name}",
                 choices=[
                     ("responsible", "Ответственный"),
                     ("irresponsible", "Безответственный")

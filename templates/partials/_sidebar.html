@@ -53,12 +53,12 @@
         </li>
         <li class="nav-item">
             <a href="{% url 'roles:manage_roles' %}" class="nav-link {% if request.resolver_match.url_name == 'manage_roles' %}active{% endif %}">
-                ⚙️ Настройки ролей
+                ⚙️ Настройки функции
             </a>
         </li>
         <li class="nav-item">
             <a href="{% url 'roles:assign_roles' %}" class="nav-link {% if request.resolver_match.url_name == 'assign_roles' %}active{% endif %}">
-                🧑‍🔧 Роли резидентов
+                🧑‍🔧 Функции резидентов
             </a>
         </li>
         <li class="nav-item">
