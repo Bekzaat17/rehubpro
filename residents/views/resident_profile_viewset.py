@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -8,7 +9,7 @@ from residents.services.resident_profile_service import ResidentProfileService
 from residents.serializers.resident_profile_serializer import ResidentProfileSerializer
 
 
-class ResidentProfileViewSet(viewsets.ViewSet):
+class ResidentProfileViewSet(LoginRequiredMixin, viewsets.ViewSet):
     """
     API для отображения и редактирования личного дела резидента
     """

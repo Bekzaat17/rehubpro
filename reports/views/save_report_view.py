@@ -1,5 +1,5 @@
 # reports/views/save_report_view.py
-
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
 from django.http import JsonResponse
 from django.utils import timezone
@@ -10,7 +10,7 @@ from reports.forms.resident_report_form import ResidentReportForm
 from reports.services.report_validator import ReportValidator
 
 
-class SaveReportView(View):
+class SaveReportView(LoginRequiredMixin, View):
     """
     Сохраняет отчёт по резиденту (AJAX).
     Только на текущую дату.

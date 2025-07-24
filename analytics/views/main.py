@@ -1,4 +1,5 @@
 # analytics/views/main.py
+from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render
 
@@ -20,6 +21,7 @@ from analytics.director import ReportDirector
 from residents.models import Resident
 
 
+@login_required
 def analytics_main_view(request):
     queryset = ResidentReport.objects.all()
     filters = request.GET.dict()
@@ -47,6 +49,7 @@ def analytics_main_view(request):
     result = director.run()
     return JsonResponse(result)
 
+@login_required
 def analytics_full_page_view(request):
     residents = Resident.active.all()
     return render(request, "analytics/full_page.html", {

@@ -1,8 +1,9 @@
 # views/lecture_list_view.py
-
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from lectures.models.lecture import Lecture
 
+@login_required
 def lecture_list_view(request):
     """
     Отображает список всех опубликованных лекций.

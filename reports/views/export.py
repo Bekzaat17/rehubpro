@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
 from django.views import View
 from django.utils.dateparse import parse_date
@@ -7,7 +8,7 @@ from weasyprint import HTML
 
 #TODO dobavit logo v export_pdf
 
-class ExportReportsView(View):
+class ExportReportsView(LoginRequiredMixin, View):
     """
     Экспорт всех отчётов за выбранную дату в формате TXT.
     """
