@@ -197,11 +197,11 @@ function renderChart(ctx, content) {
 
       content.columns.forEach((date, dateIndex) => {
         const row = document.createElement("tr");
-        row.innerHTML = `<th>${date}</th>` + content.rows.map((_, roleIndex) => {
+        row.innerHTML = `<th class="heatmap-cell">${date}</th>` + content.rows.map((_, roleIndex) => {
           const val = content.values[roleIndex][dateIndex];
-          const color = val === "Ответственный" ? "text-success fw-bold" :
-                        val === "Безответственный" ? "text-danger fw-bold" : "text-muted";
-          return `<td class="${color}">${val ?? "-"}</td>`;
+          const color = val === "Ответственный" ? "text-success" :
+                        val === "Безответственный" ? "text-danger" : "text-muted";
+          return `<td class="heatmap-cell ${color}">${val ?? "-"}</td>`;
         }).join("");
         tbody.appendChild(row);
       });
