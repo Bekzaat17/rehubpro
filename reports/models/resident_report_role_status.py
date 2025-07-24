@@ -33,8 +33,8 @@ class ResidentReportRoleStatus(models.Model):
 
     class Meta:
         unique_together = ("report", "role_assignment")
-        verbose_name = "Оценка роли резидента"
-        verbose_name_plural = "Оценки ролей резидента"
+        verbose_name = "Оценка функции резидента"
+        verbose_name_plural = "Оценки функции резидента"
 
     def __str__(self):
         return f"{self.role_assignment} — {self.get_status_display()}"

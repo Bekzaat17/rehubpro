@@ -25,7 +25,7 @@ class ResidentsDataView(LoginRequiredMixin, View):
             "Дата поступления",
             "Текущее задание",
             "Последний прогресс",
-            "Активные роли",
+            "Активные функции",
             "Заметки",
             "Тип зависимости"
         ]
@@ -65,7 +65,7 @@ class ResidentsDataView(LoginRequiredMixin, View):
             else:
                 progress_display = "—"
 
-            # Активные роли
+            # Активные функции
             roles = ResidentRoleAssignment.objects.filter(
                 resident=r,
                 assigned_at__lte=today

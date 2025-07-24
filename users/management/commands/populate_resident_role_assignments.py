@@ -58,7 +58,7 @@ class Command(BaseCommand):
                 if resident.date_of_admission > rotation_date:
                     continue  # ещё не поступил
 
-                # Завершаем активные роли
+                # Завершаем активные функции
                 active_roles = resident.role_assignments.filter(unassigned_at__isnull=True)
                 for ar in active_roles:
                     ar.unassigned_at = rotation_date
