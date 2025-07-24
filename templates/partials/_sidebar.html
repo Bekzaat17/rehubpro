@@ -1,5 +1,6 @@
 {% load static %}
 {% load logo_tags %}
+
 <nav class="sidebar d-flex flex-column p-3">
     <div class="text-center mb-3">
         {% logo_url as logo %}
@@ -9,61 +10,59 @@
             <h4 class="text-white">{{ PROJECT_NAME }}</h4>
         {% endif %}
     </div>
-{#    <hr class="text-secondary">#}
+
     <ul class="nav nav-pills flex-column mb-auto">
         <li>
-            <a href="{% url 'users:dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+            <a href="{% url 'users:dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
                 🏠 Главная
             </a>
         </li>
-        <li class="nav-item">
-            <a href="{% url 'tasks:task_templates' %}" class="nav-link {% if request.resolver_match.url_name == 'task_templates' %}active{% endif %}">
-                📋 Шаблоны заданий
-            </a>
-        </li>
-        <li class="nav-item">
+        <li>
             <a href="{% url 'tasks:resident_tasks' %}" class="nav-link {% if request.resolver_match.url_name == 'resident_tasks' %}active{% endif %}">
                 🧑‍🏫 Задания резидентов
             </a>
         </li>
-        <li class="nav-item">
+        <li>
             <a href="{% url 'reports:fill_reports' %}" class="nav-link {% if request.resolver_match.url_name == 'fill_reports' %}active{% endif %}">
                 ✍️ Заполнить отчёт
             </a>
         </li>
-        <li class="nav-item">
-            <a href="{% url 'analytics:analytics_full_page' %}" class="nav-link {% if request.resolver_match.app_name == 'analytics' %}active{% endif %}">
-                📊 Аналитика
-            </a>
-        </li>
-        <li class="nav-item">
+        <li>
             <a href="{% url 'reports:view_by_date' date=now|date:"Y-m-d" %}" class="nav-link {% if request.resolver_match.url_name == 'view_by_date' %}active{% endif %}">
                 📅 Просмотр отчётов
             </a>
         </li>
-        <li class="nav-item">
-            <a href="{% url 'storage:root' %}" class="nav-link {% if request.resolver_match.app_name == 'storage' %}active{% endif %}">
-                📁 Хранилище
+        <li>
+            <a href="{% url 'analytics:analytics_full_page' %}" class="nav-link {% if request.resolver_match.app_name == 'analytics' %}active{% endif %}">
+                📊 Аналитика
             </a>
         </li>
-        <li class="nav-item">
+        <li>
             <a href="{% url 'reminders:reminders_page' %}" class="nav-link {% if request.resolver_match.app_name == 'reminders' %}active{% endif %}">
                 🕒 Напоминания
             </a>
         </li>
-        <li class="nav-item">
+        <li>
+            <a href="{% url 'storage:root' %}" class="nav-link {% if request.resolver_match.app_name == 'storage' %}active{% endif %}">
+                📁 Хранилище
+            </a>
+        </li>
+
+        <hr class="text-secondary my-2">
+
+        <li>
+            <a href="{% url 'tasks:task_templates' %}" class="nav-link {% if request.resolver_match.url_name == 'task_templates' %}active{% endif %}">
+                📋 Шаблоны заданий
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'references:reference_dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'reference_dashboard' %}active{% endif %}">
+                ⚙️️ Настройки справочников
+            </a>
+        </li>
+        <li>
             <a href="{% url 'roles:manage_roles' %}" class="nav-link {% if request.resolver_match.url_name == 'manage_roles' %}active{% endif %}">
                 ⚙️ Настройки функции
-            </a>
-        </li>
-        <li class="nav-item">
-            <a href="{% url 'roles:assign_roles' %}" class="nav-link {% if request.resolver_match.url_name == 'assign_roles' %}active{% endif %}">
-                🧑‍🔧 Функции резидентов
-            </a>
-        </li>
-        <li class="nav-item">
-            <a href="{% url 'references:reference_dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'reference_dashboard' %}active{% endif %}">
-                🛠️ Настройки справочников
             </a>
         </li>
     </ul>
