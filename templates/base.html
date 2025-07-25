@@ -167,7 +167,9 @@
             {% block content %}{% endblock %}
         </main>
 
-        {% include "partials/_footer.html" %}
+        {% if request.user.is_authenticated %}
+            {% include "partials/_footer.html" %}
+        {% endif %}
     </div>
 
     {% if license_status == "expired" %}
